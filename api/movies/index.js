@@ -63,10 +63,23 @@ router.get('/tmdb/home', asyncHandler(async (req, res) => {
 }));
 
 router.get('/tmdb/movie/:id', asyncHandler(async (req, res) => {
-    const id = parseInt(req.params.id);
-    const movie = await getMovie(id);
-    res.status(200).json(movie);
+    try {
+        const id = parseInt(req.params.id);
+        if (isNaN(id) || id <= 0) {
+            throw new Error('Invalid ID');
+        }
+
+        const movie = await getMovie(id);
+        if (!movie) {
+            res.status(404).json({ message: "The resource you requested could not be found." });
+        } else {
+            res.status(200).json(movie);
+        }
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 }));
+
 
 // upcoming movies
 router.get('/tmdb/upcoming', asyncHandler(async (req, res) => {
