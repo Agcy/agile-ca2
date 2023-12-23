@@ -47,10 +47,19 @@ router.get('/:id', asyncHandler(async (req, res) => {
 
 // discover movies
 router.get('/tmdb/home', asyncHandler(async (req, res) => {
-    const page = req.query.page
-    const language = req.query.language
-    const movies = await getMovies(page, language);
-    res.status(200).json(movies);
+    try {
+        const page = parseInt(req.query.page);
+        const language = req.query.language;
+
+        if (isNaN(page) || page <= 0 || !language) {
+            throw new Error('Invalid parameters');
+        }
+
+        const movies = await getMovies(page, language);
+        res.status(200).json(movies);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 }));
 
 router.get('/tmdb/movie/:id', asyncHandler(async (req, res) => {

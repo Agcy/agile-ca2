@@ -82,7 +82,7 @@ describe("Movies endpoint", () => {
       api.close(); // Release PORT 8080
     });
 
-    describe("GET /api/movies/tmdb/home", () => {
+    describe("Discover movies endpoint - Pass Tests", () => {
       it("should return movies and a status 200", (done) => {
         request(api)
             .get("/api/movies/tmdb/home")
@@ -97,5 +97,63 @@ describe("Movies endpoint", () => {
             });
       });
     });
+
+    describe("Discover movies endpoint - Boundary Tests", () => {
+      // Testing with minimum valid page number
+      it("should handle minimum valid page number", (done) => {
+        request(api)
+            .get("/api/movies/tmdb/home")
+            .query({ page: 1, language: 'us-EN' })
+            .set("Accept", "application/json")
+            .expect(200)
+            .end((err, res) => {
+              expect(res.body).to.be.an("object");
+              expect(res.body).to.have.property("results");
+              expect(res.body.results).to.be.an("array");
+              done();
+            });
+      });
+
+      // Testing with invalid page number (e.g., 0 or negative)
+      it("should return error for invalid page number", (done) => {
+        request(api)
+            .get("/api/movies/tmdb/home")
+            .query({ page: 0, language: 'us-EN' })
+            .set("Accept", "application/json")
+            .expect(400)
+            .end((err, res) => {
+              expect(res.body).to.have.property("error");
+              done();
+            });
+      });
+    });
+
+    describe("Discover movies endpoint - Failure Tests", () => {
+      // Testing with invalid language code
+      it("should return error for invalid language code", (done) => {
+        request(api)
+            .get("/api/movies/tmdb/home")
+            .query({ page: "@", language: 'invalid-code' })
+            .set("Accept", "application/json")
+            .expect(400)
+            .end((err, res) => {
+              expect(res.body).to.have.property("error");
+              done();
+            });
+      });
+
+      // Testing with missing parameters
+      it("should return error when parameters are missing", (done) => {
+        request(api)
+            .get("/api/movies/tmdb/home")
+            .set("Accept", "application/json")
+            .expect(400)
+            .end((err, res) => {
+              expect(res.body).to.have.property("error");
+              done();
+            });
+      });
+    });
+
   });
 });
