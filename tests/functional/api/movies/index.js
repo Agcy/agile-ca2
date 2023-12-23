@@ -70,8 +70,31 @@ describe("Movies endpoint", () => {
           .expect(404)
           .expect({
             status_code: 404,
-            message: "The resource you requested could not be found.",
+            message: "The movie you requested could not be found.",
           });
+      });
+    });
+  });
+
+  // home page
+  describe("Discover movies endpoint", () => {
+    afterEach(() => {
+      api.close(); // Release PORT 8080
+    });
+
+    describe("GET /api/movies/tmdb/home", () => {
+      it("should return movies and a status 200", (done) => {
+        request(api)
+            .get("/api/movies/tmdb/home")
+            .query({ page: 1, language: 'us-EN' }) // example parameters
+            .set("Accept", "application/json")
+            .expect(200)
+            .end((err, res) => {
+              expect(res.body).to.be.a("object");
+              expect(res.body).to.have.property("results");
+              expect(res.body.results).to.be.a("array");
+              done();
+            });
       });
     });
   });
