@@ -62,6 +62,7 @@ router.get('/tmdb/home', asyncHandler(async (req, res) => {
     }
 }));
 
+// single movie
 router.get('/tmdb/movie/:id', asyncHandler(async (req, res) => {
     try {
         const id = parseInt(req.params.id);
@@ -128,7 +129,6 @@ router.get('/tmdb/genres', asyncHandler(async (req, res) => {
     }
 }));
 
-
 // 获取演员电影作品
 router.get('/tmdb/movie_credits/:id', asyncHandler(async (req, res) => {
     try {
@@ -148,7 +148,7 @@ router.get('/tmdb/movie_credits/:id', asyncHandler(async (req, res) => {
     }
 }));
 
-
+// movie images
 router.get('/tmdb/movie/:id/image', asyncHandler(async (req, res) => {
     try {
         const id = req.params.id;
@@ -167,12 +167,25 @@ router.get('/tmdb/movie/:id/image', asyncHandler(async (req, res) => {
     }
 }));
 
-
+//reviews
 router.get('/tmdb/movie/:id/review', asyncHandler(async (req, res) => {
-    const id = req.params.id;
-    const movieReviews = await getMovieReviews(id);
-    res.status(200).json(movieReviews);
+    try {
+        const id = req.params.id;
+        if (!id || isNaN(Number(id))) {
+            throw new Error('Invalid ID');
+        }
+
+        const movieReviews = await getMovieReviews(id);
+        if (!movieReviews) {
+            res.status(404).json({ message: "No reviews found for the provided movie ID." });
+        } else {
+            res.status(200).json(movieReviews);
+        }
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 }));
+
 
 
 

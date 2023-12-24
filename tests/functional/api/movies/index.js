@@ -281,7 +281,7 @@ describe("Movies endpoint", () => {
 
     // trending movie page
     describe("Trending movie endpoint", () => {
-        describe("GET /api/movies/tmdb/trending - Success Tests", () => {
+        describe("Trending movie endpoint - Success Tests", () => {
             it("should return trending movies for valid parameters", (done) => {
                 request(api)
                     .get("/api/movies/tmdb/trending")
@@ -296,7 +296,7 @@ describe("Movies endpoint", () => {
             });
         });
 
-        describe("GET /api/movies/tmdb/trending - Boundary Tests", () => {
+        describe("Trending movie endpoint - Boundary Tests", () => {
             it("should handle minimum valid page number", (done) => {
                 request(api)
                     .get("/api/movies/tmdb/trending")
@@ -316,7 +316,7 @@ describe("Movies endpoint", () => {
             });
         });
 
-        describe("GET /api/movies/tmdb/trending - Failure Tests", () => {
+        describe("Trending movie endpoint - Failure Tests", () => {
             it("should return error when parameters are missing", (done) => {
                 request(api)
                     .get("/api/movies/tmdb/trending")
@@ -330,7 +330,7 @@ describe("Movies endpoint", () => {
 
     // movie genres
     describe("Movie genres endpoint", () => {
-        describe("GET /api/movies/tmdb/genres - Success Tests", () => {
+        describe("Movie genres endpoint - Success Tests", () => {
             it("should return movie genres for valid language", (done) => {
                 request(api)
                     .get("/api/movies/tmdb/genres")
@@ -345,7 +345,7 @@ describe("Movies endpoint", () => {
             });
         });
 
-        describe("GET /api/movies/tmdb/genres - Boundary Tests", () => {
+        describe("Movie genres endpoint - Boundary Tests", () => {
             it("should handle valid language code", (done) => {
                 request(api)
                     .get("/api/movies/tmdb/genres")
@@ -365,7 +365,7 @@ describe("Movies endpoint", () => {
             });
         });
 
-        describe("GET /api/movies/tmdb/genres - Failure Tests", () => {
+        describe("Movie genres endpoint - Failure Tests", () => {
             it("should return default genres when language is missing", (done) => {
                 request(api)
                     .get("/api/movies/tmdb/genres")
@@ -379,7 +379,7 @@ describe("Movies endpoint", () => {
 
     // movie credits
     describe("Movie credits endpoint", () => {
-        describe("GET /api/movies/tmdb/movie_credits/:id - Success Tests", () => {
+        describe("Movie credits endpoint - Success Tests", () => {
             it("should return movie credits for valid actor id", (done) => {
                 // Assuming that '1' is a valid actor id for testing
                 request(api)
@@ -396,7 +396,7 @@ describe("Movies endpoint", () => {
             });
         });
 
-        describe("GET /api/movies/tmdb/movie_credits/:id - Boundary Tests", () => {
+        describe("Movie credits endpoint - Boundary Tests", () => {
             it("should return error for non-numeric actor id", (done) => {
                 request(api)
                     .get("/api/movies/tmdb/movie_credits/abc")
@@ -414,7 +414,7 @@ describe("Movies endpoint", () => {
             });
         });
 
-        describe("GET /api/movies/tmdb/movie_credits/:id - Failure Tests", () => {
+        describe("Movie credits endpoint - Failure Tests", () => {
             it("should return not found for non-existent actor id", (done) => {
                 // Assuming that '9999999' is a non-existent actor id for testing
                 request(api)
@@ -428,7 +428,7 @@ describe("Movies endpoint", () => {
 
     // movie images
     describe("Movie images endpoint", () => {
-        describe("GET /api/movies/tmdb/movie/:id/image - Success Tests", () => {
+        describe("Movie images endpoint - Success Tests", () => {
             it("should return movie images for valid movie id", (done) => {
                 // Assuming that '1' is a valid movie id for testing
                 request(api)
@@ -445,7 +445,7 @@ describe("Movies endpoint", () => {
             });
         });
 
-        describe("GET /api/movies/tmdb/movie/:id/image - Boundary Tests", () => {
+        describe("Movie images endpoint - Boundary Tests", () => {
             it("should return error for non-numeric movie id", (done) => {
                 request(api)
                     .get("/api/movies/tmdb/movie/abc/image")
@@ -463,13 +463,62 @@ describe("Movies endpoint", () => {
             });
         });
 
-        describe("GET /api/movies/tmdb/movie/:id/image - Failure Tests", () => {
+        describe("Movie images endpoint - Failure Tests", () => {
             it("should return not found for non-existent movie id", (done) => {
                 // Assuming that '9999999' is a non-existent movie id for testing
                 request(api)
                     .get("/api/movies/tmdb/movie/9999999/image")
                     .set("Accept", "application/json")
                     .expect(400)
+                    .end(done);
+            });
+        });
+
+    })
+
+    // movie reviews
+    describe("Movies reviews endpoint", () => {
+        describe("Movies reviews endpoint - Success Tests", () => {
+            it("should return movie reviews for valid movie id", (done) => {
+                // Assuming that '1' is a valid movie id for testing
+                request(api)
+                    .get("/api/movies/tmdb/movie/200/review")
+                    .set("Accept", "application/json")
+                    .expect("Content-Type", /json/)
+                    .expect(200)
+                    .end((err, res) => {
+                        expect(res.body).to.be.an("array");
+                        expect(res.body.length).to.be.greaterThan(0);
+                        done();
+                    });
+            });
+        });
+
+        describe("Movies reviews endpoint - Boundary Tests", () => {
+            it("should return error for non-numeric movie id", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/movie/abc/review")
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+
+            it("should return error for negative movie id", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/movie/-1/review")
+                    .set("Accept", "application/json")
+                    .expect(404)
+                    .end(done);
+            });
+        });
+
+        describe("Movies reviews endpoint - Failure Tests", () => {
+            it("should return not found for non-existent movie id", (done) => {
+                // Assuming that '9999999' is a non-existent movie id for testing
+                request(api)
+                    .get("/api/movies/tmdb/movie/9999999/review")
+                    .set("Accept", "application/json")
+                    .expect(404)
                     .end(done);
             });
         });
