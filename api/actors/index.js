@@ -79,10 +79,23 @@ router.get('/tmdb/actors', asyncHandler(async (req, res) => {
 
 // 获取单个演员
 router.get('/tmdb/actor/:id', asyncHandler(async (req, res) => {
-    const id = parseInt(req.params.id)
-    const popularActors = await getActor(id);
-    res.status(200).json(popularActors);
+    try {
+        const id = parseInt(req.params.id);
+        if (isNaN(id) || id <= 0) {
+            throw new Error('Invalid ID');
+        }
+
+        const actor = await getActor(id);
+        if (!actor) {
+            res.status(404).json({ message: 'The actor you requested could not be found.', status_code: 404 });
+        } else {
+            res.status(200).json(actor);
+        }
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 }));
+
 
 // 获取演员图片
 router.get('/tmdb/images/:id', asyncHandler(async (req, res) => {
