@@ -156,12 +156,14 @@ router.post('/tmdb/:id/marked', authenticate, asyncHandler(async (req, res) => {
     const { movieId } = req.body;
 
     try {
-        await User.findByIdAndUpdate(id, {
-            $addToSet: { marked: movieId }
-        }, {new: true});
+        if (req.user.id !== id) {
+            return res.status(403).json({ message: 'Forbidden access.' });
+        }
+
+        await User.findByIdAndUpdate(id, { $addToSet: { marked: movieId } }, { new: true });
         res.status(200).json({ message: 'Movie marked successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }));
 
@@ -170,32 +172,35 @@ router.delete('/tmdb/:id/marked/:movieId', authenticate, asyncHandler(async (req
     const { id, movieId } = req.params;
 
     try {
-        await User.findByIdAndUpdate(id, {
-            $pull: { marked: movieId }
-        }, {new: true});
+        if (req.user.id !== id) {
+            return res.status(403).json({ message: 'Forbidden access.' });
+        }
+
+        await User.findByIdAndUpdate(id, { $pull: { marked: movieId } }, { new: true });
         res.status(200).json({ message: 'Movie unmarked successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }));
 
 
 // follow actor
-
 router.get('/tmdb/:id/follow', authenticate, asyncHandler(async (req, res) => {
     const { id } = req.params;
-    console.info(id)
+
     try {
+        if (req.user.id !== id) {
+            return res.status(403).json({ message: 'Forbidden access.' });
+        }
+
         const user = await User.findById(id).populate('follow');
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-        console.info(user)
 
         res.status(200).json(user.follow);
     } catch (error) {
-        console.info(error.message)
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }));
 

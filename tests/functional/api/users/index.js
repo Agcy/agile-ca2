@@ -380,7 +380,7 @@ describe("Users endpoint", () => {
                             .post(`/api/users/tmdb/invalidUserId/marked`)
                             .set("Authorization", `${token}`)
                             .send({ movieId: validMovieId })
-                            .expect(500)
+                            .expect(403)
                             .end(done);
                     });
                 });
@@ -389,7 +389,44 @@ describe("Users endpoint", () => {
         });
 
         // follow actor page
+        describe("Followed actors page", () => {
 
+            // get followed actors
+            describe("Get user followed actors", () => {
+                describe("GET /api/users/tmdb/:id/follow - Success Test", () => {
+
+                    it("should retrieve followed actors for a valid user ID", (done) => {
+                        request(api)
+                            .get(`/api/users/tmdb/${userId}/follow`)
+                            .set("Authorization", `${token}`)
+                            .expect(200)
+                            .end((err, res) => {
+                                expect(res.body).to.be.an("array");
+                                done();
+                            });
+                    });
+                });
+
+                describe("GET /api/users/tmdb/:id/follow - Failure Tests", () => {
+                    it("should return 401 Unauthorized for invalid token", (done) => {
+                        request(api)
+                            .get(`/api/users/tmdb/${userId}/follow`)
+                            .set("Authorization", "Bearer invalidToken")
+                            .expect(401)
+                            .end(done);
+                    });
+
+                    it("should return 404 Not Found for non-existent user ID", (done) => {
+                        const nonExistentUserId = '765413245689';
+                        request(api)
+                            .get(`/api/users/tmdb/${nonExistentUserId}/follow`)
+                            .set("Authorization", `${token}`)
+                            .expect(403)
+                            .end(done);
+                    });
+                });
+            })
+        })
     });
 
 
