@@ -19,11 +19,17 @@ router.get('/tmdb/user/:userId', asyncHandler(async (req, res) => {
 }));
 
 router.get('/tmdb/all', async (req, res) => {
-    const reviews = await Review.find().populate('movieId', 'title');
-    if (reviews) {
-        res.status(200).json(reviews);
-    } else {
-        res.status(404).json({ message: 'No reviews found' });
+    try {
+        const reviews = await Review.find();
+        console.log(reviews)
+        if (reviews && reviews.length > 0) {
+            console.info("123456"+reviews)
+            res.status(200).json(reviews);
+        } else {
+            res.status(404).json({ message: 'No reviews found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 });
 
@@ -31,12 +37,10 @@ router.get('/tmdb/all', async (req, res) => {
 router.post('/tmdb/:movieId', asyncHandler(async (req, res) => {
     const { movieId } = req.params;
     const { userId, author, review, rating } = req.body;
-    console.info(userId, author, review, rating);
 
     const reviewData = await Review.create({ movieId, userId, author, review, rating }).catch(err => null);
 
     if (reviewData) {
-        console.info("add success");
         res.status(201).json(reviewData);
     } else {
         res.status(500).json({ message: 'Internal server error' });

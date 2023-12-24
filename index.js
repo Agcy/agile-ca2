@@ -4,6 +4,7 @@ import moviesRouter from './api/movies';
 import actorsRouter from './api/actors';
 import './db';
 import './seedData'
+import reviewsRouter from './api/reviews';
 import usersRouter from './api/users';
 import authenticate from './authenticate';
 import cors from "cors";
@@ -22,6 +23,7 @@ app.use(express.json());
 app.use('/api/users', usersRouter);
 app.use('/api/actors',  actorsRouter);
 app.use('/api/movies',  moviesRouter);
+app.use('/api/reviews',  reviewsRouter);
 
 app.use(defaultErrHandler);
 let server = app.listen(port, () => {

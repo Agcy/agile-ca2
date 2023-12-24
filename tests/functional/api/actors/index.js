@@ -10,7 +10,7 @@ import movies from "../../../../seedData/movies";
 const expect = chai.expect;
 let db;
 
-describe("Movies endpoint", () => {
+describe("Actors endpoint", () => {
     before(() => {
         mongoose.connect(process.env.MONGO_DB, {
             useNewUrlParser: true,
