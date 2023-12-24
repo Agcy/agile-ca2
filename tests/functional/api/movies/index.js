@@ -229,4 +229,53 @@ describe("Movies endpoint", () => {
 
 
     });
+
+    // upcoming movie page
+    describe("Upcoming movie endpoint", () => {
+        describe("Upcoming movie endpoint - Success Tests", () => {
+            it("should return upcoming movies for valid parameters", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/upcoming")
+                    .query({ page: 1, language: 'en-US' })
+                    .set("Accept", "application/json")
+                    .expect("Content-Type", /json/)
+                    .expect(200)
+                    .end((err, res) => {
+                        expect(res.body.results).to.be.an("array");
+                        done();
+                    });
+            });
+        });
+
+        describe("Upcoming movie endpoint - Boundary Tests", () => {
+            it("should handle minimum valid page number", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/upcoming")
+                    .query({ page: 1, language: 'en-US' })
+                    .set("Accept", "application/json")
+                    .expect(200)
+                    .end(done);
+            });
+
+            it("should return error for invalid page number", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/upcoming")
+                    .query({ page: 0, language: 'en-US' })
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+        });
+
+        describe("Upcoming movie endpoint - Failure Tests", () => {
+            it("should return error when parameters are missing", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/upcoming")
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+        });
+
+    })
 });
