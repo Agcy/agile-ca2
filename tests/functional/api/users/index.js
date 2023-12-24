@@ -59,13 +59,69 @@ describe("Users endpoint", () => {
     });
   });
 
+  // user register function
+  describe("User register endpoint", () => {
+    describe("POST /api/users/ - Registration Success Tests", () => {
+      it("should successfully register a user with valid credentials", (done) => {
+        request(api)
+            .post("/api/users/")
+            .query({ action: 'register' })
+            .send({ username: "user777", email: "user777@189.com", password: "Password@123" }) // Replace with valid credentials
+            .set("Accept", "application/json")
+            .expect("Content-Type", /json/)
+            .expect(201)
+            .end((err, res) => {
+              expect(res.body).to.be.an("object");
+              expect(res.body.success).to.be.true;
+              expect(res.body).to.have.property("token");
+              done();
+            });
+      });
+    });
+
+    describe("POST /api/users/ - Registration Boundary Tests", () => {
+      it("should return error for missing required fields", (done) => {
+        request(api)
+            .post("/api/users/")
+            .query({ action: 'register' })
+            .send({ username: "newUser", email: "newuser@fail.com" }) // Missing password
+            .set("Accept", "application/json")
+            .expect(400)
+            .end(done);
+      });
+
+      it("should return error for invalid email format", (done) => {
+        request(api)
+            .post("/api/users/")
+            .query({ action: 'register' })
+            .send({ username: "newUser", email: "invalidEmail", password: "Password@123" })
+            .set("Accept", "application/json")
+            .expect(400)
+            .end(done);
+      });
+    });
+
+    // describe("POST /api/users/ - Registration Failure Tests", () => {
+    //   it("should return error for already existing username or email", (done) => {
+    //     request(api)
+    //         .post("/api/users/")
+    //         .query({ action: 'register' })
+    //         .send({ username: "user1", email: "123@163.com", password: "Password@123" }) // Use existing username and email
+    //         .set("Accept", "application/json")
+    //         .expect(400)
+    //         .end(done);
+    //   });
+    // });
+
+  })
+
   // user login function
   describe("User login endpoint", () => {
     describe("POST /api/users/ - Login Success Tests", () => {
       it("should login successfully with correct email", (done) => {
         request(api)
             .post("/api/users/")
-            .send({ account: "7654@163.com", password: "Liang@@##123" }) // Replace with valid credentials
+            .send({ account: "test@qq.com", password: "test456@" }) // Replace with valid credentials
             .set("Accept", "application/json")
             // .expect("Content-Type", /json/)
             .expect(200)
@@ -117,49 +173,4 @@ describe("Users endpoint", () => {
   })
 
 
-  // describe("POST /api/users ", () => {
-  //   describe("For a register action", () => {
-  //     describe("when the payload is correct", () => {
-  //       it("should return a 201 status and the confirmation message", () => {
-  //         return request(api)
-  //           .post("/api/users?action=register")
-  //           .send({
-  //             username: "user3",
-  //             password: "test123@",
-  //           })
-  //           .expect(201)
-  //           .expect({ msg: "Successful created new user.", code: 201 });
-  //       });
-  //       after(() => {
-  //         return request(api)
-  //           .get("/api/users")
-  //           .set("Accept", "application/json")
-  //           .expect(200)
-  //           .then((res) => {
-  //             expect(res.body.length).to.equal(3);
-  //             const result = res.body.map((user) => user.username);
-  //             expect(result).to.have.members(["user1", "user2", "user3"]);
-  //           });
-  //       });
-  //     });
-  //   });
-  //   describe("For an authenticate action", () => {
-  //     describe("when the payload is correct", () => {
-  //       it("should return a 200 status and a generated token", () => {
-  //         return request(api)
-  //           .post("/api/users?action=authenticate")
-  //           .send({
-  //             username: "user1",
-  //             password: "test123@",
-  //           })
-  //           .expect(200)
-  //           .then((res) => {
-  //             expect(res.body.success).to.be.true;
-  //             expect(res.body.token).to.not.be.undefined;
-  //             user1token = res.body.token.substring(7);
-  //           });
-  //       });
-  //     });
-  //   });
-  // });
 });
