@@ -300,6 +300,7 @@ describe("Users endpoint", () => {
             });
         });
 
+        // marked movie page
         describe("Marked movies page", () => {
             // get user marked movies
             describe("Get user marked movies", () => {
@@ -336,7 +337,59 @@ describe("Users endpoint", () => {
                 });
 
             });
+
+            // add and delete marked movies
+            describe("Add and Delete marked movies", () => {
+                describe("POST /api/users/tmdb/:id/marked - Success Test", () => {
+
+                    it("should mark a movie successfully", (done) => {
+                        request(api)
+                            .post(`/api/users/tmdb/${userId}/marked`)
+                            .set("Authorization", `${token}`)
+                            .send({ movieId: validMovieId })
+                            .expect(200)
+                            .end((err, res) => {
+                                expect(res.body).to.have.property("message", "Movie marked successfully");
+                                done();
+                            });
+                    });
+
+                    it("should unmark a movie successfully", (done) => {
+                        request(api)
+                            .delete(`/api/users/tmdb/${userId}/marked/${validMovieId}`)
+                            .set("Authorization", `${token}`)
+                            .expect(200)
+                            .end((err, res) => {
+                                expect(res.body).to.have.property("message", "Movie unmarked successfully");
+                                done();
+                            });
+                    });
+                });
+
+                describe("POST /api/users/tmdb/:id/marked - Failure Tests", () => {
+                    it("should return error for unauthorized access", (done) => {
+                        request(api)
+                            .post(`/api/users/tmdb/${userId}/marked`)
+                            .send({ movieId: validMovieId })
+                            .expect(401)
+                            .end(done);
+                    });
+
+                    it("should return error for invalid user ID", (done) => {
+                        request(api)
+                            .post(`/api/users/tmdb/invalidUserId/marked`)
+                            .set("Authorization", `${token}`)
+                            .send({ movieId: validMovieId })
+                            .expect(500)
+                            .end(done);
+                    });
+                });
+
+            })
         });
+
+        // follow actor page
+
     });
 
 

@@ -150,6 +150,7 @@ router.get('/tmdb/:id/marked', authenticate, asyncHandler(async (req, res) => {
     }
 }));
 
+// add marked
 router.post('/tmdb/:id/marked', authenticate, asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { movieId } = req.body;
@@ -164,6 +165,7 @@ router.post('/tmdb/:id/marked', authenticate, asyncHandler(async (req, res) => {
     }
 }));
 
+// delete marked
 router.delete('/tmdb/:id/marked/:movieId', authenticate, asyncHandler(async (req, res) => {
     const { id, movieId } = req.params;
 
