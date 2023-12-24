@@ -119,10 +119,24 @@ router.get('/tmdb/images/:id', asyncHandler(async (req, res) => {
 
 // 获取演员电影作品
 router.get('/tmdb/movie_credits/:id', asyncHandler(async (req, res) => {
-    const id = parseInt(req.params.id);
-    const language = req.query.language
-    const actorMovieCredits = await getActorMovieCredits(id, language);
-    res.status(200).json(actorMovieCredits);
+    try {
+        const id = parseInt(req.params.id);
+        const language = req.query.language || 'en-US'; // Default language if not provided
+
+        if (isNaN(id) || id <= 0) {
+            throw new Error('Invalid ID');
+        }
+
+        const actorMovieCredits = await getActorMovieCredits(id, language);
+        if (!actorMovieCredits) {
+            res.status(404).json({ message: 'No movie credits found for the provided actor ID.', status_code: 404 });
+        } else {
+            res.status(200).json(actorMovieCredits);
+        }
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 }));
+
 
 export default router;

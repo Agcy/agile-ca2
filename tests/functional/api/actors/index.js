@@ -284,6 +284,56 @@ describe("Movies endpoint", () => {
             });
         });
 
-    })
+    });
+
+    // actor credits
+    describe("Actor credits endpoint", () => {
+        describe("GET /api/actors/tmdb/movie_credits/:id - Success Tests", () => {
+            it("should return movie credits of an actor for valid actor id and language", (done) => {
+                request(api)
+                    .get("/api/actors/tmdb/movie_credits/200")
+                    .query({ language: 'en-US' })
+                    .set("Accept", "application/json")
+                    .expect("Content-Type", /json/)
+                    .expect(200)
+                    .end((err, res) => {
+                        expect(res.body).to.be.an("object");
+                        expect(res.body).to.have.property("cast").that.is.an("array");
+                        done();
+                    });
+            });
+        });
+
+        describe("GET /api/actors/tmdb/movie_credits/:id - Boundary Tests", () => {
+            it("should return error for non-numeric actor id", (done) => {
+                request(api)
+                    .get("/api/actors/tmdb/movie_credits/abc")
+                    .query({ language: 'en-US' })
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+
+            it("should return error for negative actor id", (done) => {
+                request(api)
+                    .get("/api/actors/tmdb/movie_credits/-1")
+                    .query({ language: 'en-US' })
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+        });
+
+        describe("GET /api/actors/tmdb/movie_credits/:id - Failure Tests", () => {
+            it("should return not found for non-existent actor id", (done) => {
+                request(api)
+                    .get("/api/actors/tmdb/movie_credits/9999999999")
+                    .query({ language: 'en-US' })
+                    .set("Accept", "application/json")
+                    .expect(200)
+                    .end(done);
+            });
+        });
+    });
 
 });
