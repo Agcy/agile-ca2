@@ -140,4 +140,55 @@ describe("Movies endpoint", () => {
 
     });
 
+    describe("Popular actor endpoint", () => {
+        describe("GET /api/actors/tmdb/actors - Success Tests", () => {
+            it("should return a list of popular actors for valid page and language", (done) => {
+                request(api)
+                    .get("/api/actors/tmdb/actors")
+                    .query({ page: 1, language: 'en-US' })
+                    .set("Accept", "application/json")
+                    .expect("Content-Type", /json/)
+                    .expect(200)
+                    .end((err, res) => {
+                        expect(res.body).to.be.an("object");
+                        expect(res.body).to.have.property("page");
+                        expect(res.body).to.have.property("results").that.is.an("array");
+                        done();
+                    });
+            });
+        });
+
+        describe("GET /api/actors/tmdb/actors - Boundary Tests", () => {
+            it("should handle minimum valid page number", (done) => {
+                request(api)
+                    .get("/api/actors/tmdb/actors")
+                    .query({ page: 1, language: 'en-US' })
+                    .set("Accept", "application/json")
+                    .expect(200)
+                    .end(done);
+            });
+
+            it("should return error for invalid page number", (done) => {
+                request(api)
+                    .get("/api/actors/tmdb/actors")
+                    .query({ page: 0, language: 'en-US' })
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+        });
+
+        describe("GET /api/actors/tmdb/actors - Failure Tests", () => {
+            it("should return error for invalid page format", (done) => {
+                request(api)
+                    .get("/api/actors/tmdb/actors")
+                    .query({ page: "@", language: 'invalid-code' })
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+        });
+
+    })
+
 });

@@ -61,11 +61,21 @@ router.get('/:id', asyncHandler(async (req, res) => {
 
 // 获取流行演员
 router.get('/tmdb/actors', asyncHandler(async (req, res) => {
-    const page = req.query.page
-    const language = req.query.language
-    const popularActors = await getPopularActors(language, page);
-    res.status(200).json(popularActors);
+    try {
+        const page = parseInt(req.query.page);
+        const language = req.query.language;
+
+        if (isNaN(page) || page <= 0 || !language) {
+            throw new Error('Invalid page or language');
+        }
+
+        const popularActors = await getPopularActors(language, page);
+        res.status(200).json(popularActors);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 }));
+
 
 // 获取单个演员
 router.get('/tmdb/actor/:id', asyncHandler(async (req, res) => {
