@@ -204,33 +204,39 @@ router.get('/tmdb/:id/follow', authenticate, asyncHandler(async (req, res) => {
     }
 }));
 
+// add actors
 router.post('/tmdb/:id/follow', authenticate, asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { actorId } = req.body;
-    console.info(id, actorId)
+
     try {
-        await User.findByIdAndUpdate(id, {
-            $addToSet: { follow: actorId }
-        }, {new: true});
-        console.info("add success")
+        if (req.user.id !== id) {
+            return res.status(403).json({ message: 'Forbidden access.' });
+        }
+
+        await User.findByIdAndUpdate(id, { $addToSet: { follow: actorId } }, { new: true });
         res.status(200).json({ message: 'Actor followed successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }));
 
+// delete actors
 router.delete('/tmdb/:id/follow/:actorId', authenticate, asyncHandler(async (req, res) => {
     const { id, actorId } = req.params;
 
     try {
-        await User.findByIdAndUpdate(id, {
-            $pull: { follow: actorId }
-        }, {new: true});
+        if (req.user.id !== id) {
+            return res.status(403).json({ message: 'Forbidden access.' });
+        }
+
+        await User.findByIdAndUpdate(id, { $pull: { follow: actorId } }, { new: true });
         res.status(200).json({ message: 'Actor unfollowed successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }));
+
 
 
 

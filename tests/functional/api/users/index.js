@@ -11,6 +11,7 @@ let user1token;
 let token;
 let userId;
 let validMovieId = 200;
+let validActorId = 27017;
 
 describe("Users endpoint", () => {
     before(() => {
@@ -60,7 +61,6 @@ describe("Users endpoint", () => {
                 .expect(200)
                 .end((err, res) => {
                     expect(res.body).to.be.an("array");
-                    console.info(res.body)
                     done();
                 });
         });
@@ -422,6 +422,54 @@ describe("Users endpoint", () => {
                             .get(`/api/users/tmdb/${nonExistentUserId}/follow`)
                             .set("Authorization", `${token}`)
                             .expect(403)
+                            .end(done);
+                    });
+                });
+            });
+
+            // add and delete actors
+            describe("Add and delete followed actors", () => {
+                describe("POST /api/users/tmdb/:id/follow - Success Test", () => {
+
+                    it("should follow an actor successfully", (done) => {
+                        request(api)
+                            .post(`/api/users/tmdb/${userId}/follow`)
+                            .set("Authorization", `${token}`)
+                            .send({ actorId: validActorId })
+                            .expect(200)
+                            .end((err, res) => {
+                                expect(res.body).to.have.property("message", "Actor followed successfully");
+                                done();
+                            });
+                    });
+
+                    it("should unfollow an actor successfully", (done) => {
+                        request(api)
+                            .delete(`/api/users/tmdb/${userId}/follow/${validActorId}`)
+                            .set("Authorization", `${token}`)
+                            .expect(200)
+                            .end((err, res) => {
+                                expect(res.body).to.have.property("message", "Actor unfollowed successfully");
+                                done();
+                            });
+                    });
+                });
+
+                describe("POST /api/users/tmdb/:id/follow - Failure Tests", () => {
+                    it("should return error for unauthorized access", (done) => {
+                        request(api)
+                            .post(`/api/users/tmdb/${userId}/follow`)
+                            .send({ actorId: validActorId })
+                            .expect(401)
+                            .end(done);
+                    });
+
+                    it("should return error for invalid user ID", (done) => {
+                        request(api)
+                            .post(`/api/users/tmdb/invalidUserId/follow`)
+                            .set("Authorization", `${token}`)
+                            .send({ actorId: validActorId })
+                            .expect(403) // or 404 based on your implementation
                             .end(done);
                     });
                 });
