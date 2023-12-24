@@ -132,23 +132,25 @@ router.delete('/tmdb/:id/favorites/:movieId', authenticate, asyncHandler(async (
 }));
 
 // marked movie
-
-router.get('/tmdb/:id/marked', asyncHandler(async (req, res) => {
+router.get('/tmdb/:id/marked', authenticate, asyncHandler(async (req, res) => {
     const { id } = req.params;
 
     try {
+        if (req.user.id !== id) {
+            throw new Error('Unauthorized access');
+        }
+
         const user = await User.findById(id).populate('marked');
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-
         res.status(200).json(user.marked);
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }));
 
-router.post('/tmdb/:id/marked', asyncHandler(async (req, res) => {
+router.post('/tmdb/:id/marked', authenticate, asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { movieId } = req.body;
 
@@ -162,7 +164,7 @@ router.post('/tmdb/:id/marked', asyncHandler(async (req, res) => {
     }
 }));
 
-router.delete('/tmdb/:id/marked/:movieId', asyncHandler(async (req, res) => {
+router.delete('/tmdb/:id/marked/:movieId', authenticate, asyncHandler(async (req, res) => {
     const { id, movieId } = req.params;
 
     try {
@@ -178,7 +180,7 @@ router.delete('/tmdb/:id/marked/:movieId', asyncHandler(async (req, res) => {
 
 // follow actor
 
-router.get('/tmdb/:id/follow', asyncHandler(async (req, res) => {
+router.get('/tmdb/:id/follow', authenticate, asyncHandler(async (req, res) => {
     const { id } = req.params;
     console.info(id)
     try {
@@ -195,7 +197,7 @@ router.get('/tmdb/:id/follow', asyncHandler(async (req, res) => {
     }
 }));
 
-router.post('/tmdb/:id/follow', asyncHandler(async (req, res) => {
+router.post('/tmdb/:id/follow', authenticate, asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { actorId } = req.body;
     console.info(id, actorId)
@@ -210,7 +212,7 @@ router.post('/tmdb/:id/follow', asyncHandler(async (req, res) => {
     }
 }));
 
-router.delete('/tmdb/:id/follow/:actorId', asyncHandler(async (req, res) => {
+router.delete('/tmdb/:id/follow/:actorId', authenticate, asyncHandler(async (req, res) => {
     const { id, actorId } = req.params;
 
     try {
