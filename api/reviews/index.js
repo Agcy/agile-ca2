@@ -58,6 +58,7 @@ router.delete('/tmdb/:reviewId', authenticate, asyncHandler(async (req, res) => 
         if (!review) {
             return res.status(404).json({ message: 'Review not found' });
         }
+        console.log(review)
 
         // if (review.userId.toString() !== req.user.id) {
         //     return res.status(403).json({ message: 'Unauthorized to delete this review' });
@@ -69,6 +70,7 @@ router.delete('/tmdb/:reviewId', authenticate, asyncHandler(async (req, res) => 
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }));
+
 
 
 

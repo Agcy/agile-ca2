@@ -11,6 +11,8 @@ const expect = chai.expect;
 let db;
 let userId;
 let token;
+let reviewId1
+let reviewId2;
 
 describe("Reviews endpoint", () => {
     before(() => {
@@ -31,23 +33,43 @@ describe("Reviews endpoint", () => {
 
     beforeEach(async () => {
         try {
-            await Review.deleteMany();
-            // await Review.collection.insertMany(movies);
-            // add two reviews
-            await request(api).post("/api/reviews/tmdb/572802").send({
-                movieId: 572802,
-                userId: "6584bc8c54dd0c01c7144b37",
-                author: "hpl",
-                review: "hahahah hahahah hahah tooooo funnnyyyy",
-                rating: 5
-            });
-            await request(api).post("/api/reviews/tmdb/466420").send({
-                movieId: 466420,
-                userId: "65844cef30ad0fbe23c6cf06",
-                author: "hpl123",
-                review: "My all time favorite movie, family, who know!!",
-                rating: 5
-            });
+            await Review.deleteMany()
+            await User.deleteMany()
+            await request(api).post("/api/users?action=register").send({
+                username: "user1",
+                email: "123@123.com",
+                password: "test123@"
+            })
+            // 登录用户并获取令牌和用户 ID
+            const res = await request(api)
+                .post("/api/users/")
+                .send({account: "user1", password: "test123@"});
+            token = res.body.token;
+            userId = res.body.user.id;
+            // 添加第一个评论
+            const reviewRes1 = await request(api)
+                .post("/api/reviews/tmdb/27017")
+                .set("Authorization", `${token}`)
+                .send({
+                    movieId: 27017,
+                    userId: userId,
+                    author: "hpl",
+                    review: "hahahah hahahah hahah tooooo funnnyyyy",
+                    rating: 5
+                });
+            reviewId1 = reviewRes1.body._id;
+            // 添加第二个评论
+            const reviewRes2 = await request(api)
+                .post("/api/reviews/tmdb/27017")
+                .set("Authorization", `${token}`)
+                .send({
+                    movieId: 27017,
+                    userId: userId,
+                    author: "1hpl1",
+                    review: "My all time favorite movie, family, who know!!",
+                    rating: 5
+                });
+            reviewId2 = reviewRes2.body._id;
         } catch (err) {
             console.error(`failed to Load user Data: ${err}`);
         }
@@ -65,7 +87,6 @@ describe("Reviews endpoint", () => {
                     .get("/api/reviews/tmdb/all")
                     .expect(200)
                     .end((err, res) => {
-                        console.log(res.body)
                         expect(res.body).to.be.an("array");
                         if (res.body.length > 0) {
                             expect(res.body[0]).to.have.property("movieId");
@@ -96,34 +117,7 @@ describe("Reviews endpoint", () => {
     describe("My reviews page", () => {
 
         beforeEach(async () => {
-            await Review.deleteMany()
-            await User.deleteMany()
-            await request(api).post("/api/users?action=register").send({
-                username: "user1",
-                email: "123@123.com",
-                password: "test123@"
-            })
-            // 登录用户并获取令牌和用户 ID
-            const res = await request(api)
-                .post("/api/users/")
-                .send({account: "user1", password: "test123@"});
-            // add two reviews
-            await request(api).post("/api/reviews/tmdb/572802").send({
-                movieId: 1345,
-                userId: "65885601eb0d0be90b272025",
-                author: "hpl",
-                review: "hahahah hahahah hahah tooooo funnnyyyy",
-                rating: 5
-            });
-            await request(api).post("/api/reviews/tmdb/572802").send({
-                movieId: 1345,
-                userId: "65885601eb0d0be90b272025",
-                author: "1hpl1",
-                review: "My all time favorite movie, family, who know!!",
-                rating: 5
-            });
-            token = res.body.token;
-            userId = res.body.user.id;
+
 
         });
         // get single user reviews
@@ -143,7 +137,7 @@ describe("Reviews endpoint", () => {
 
             describe("GET /api/reviews/tmdb/user/:userId - Failure Test", () => {
                 it("should return 404 when no reviews are found for a user", (done) => {
-                    const invalidUserId = '8974634519864';
+                    const invalidUserId = '654136413513546852';
                     request(api)
                         .get(`/api/reviews/tmdb/user/${invalidUserId}`)
                         .set("Authorization", `${token}`)
@@ -168,7 +162,6 @@ describe("Reviews endpoint", () => {
                         .send({ userId: userId, author: "John Doe", review: "Great movie!", rating: 5 })
                         .expect(201)
                         .end((err, res) => {
-                            console.info(res.body)
                             expect(res.body).to.have.property("review", "Great movie!");
                             done();
                         });
@@ -186,6 +179,37 @@ describe("Reviews endpoint", () => {
                 });
             });
 
+
+        })
+
+        describe("Delete user reviews", () => {
+            describe("DELETE /api/reviews/tmdb/:reviewId - Success Test", () => {
+
+
+                it("should delete a review successfully", (done) => {
+                    request(api)
+                        .delete(`/api/reviews/tmdb/${reviewId1}`)
+                        .set("Authorization", `${token}`)
+                        .expect(200)
+                        .end((err, res) => {
+                            expect(res.body).to.have.property("message", "Review deleted successfully");
+                            done();
+                        });
+                });
+            });
+
+            describe("DELETE /api/reviews/tmdb/:reviewId - Failure Test", () => {
+                it("should return error when review does not exist", (done) => {
+                    request(api)
+                        .delete(`/api/reviews/tmdb/65844cef30ad0fbe23c6cf06`)
+                        .set("Authorization", `${token}`)
+                        .expect(404)
+                        .end((err, res) => {
+                            expect(res.body).to.have.property("message","Review not found");
+                            done();
+                        });
+                });
+            });
 
         })
     })
