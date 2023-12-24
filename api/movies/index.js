@@ -131,10 +131,23 @@ router.get('/tmdb/genres', asyncHandler(async (req, res) => {
 
 // 获取演员电影作品
 router.get('/tmdb/movie_credits/:id', asyncHandler(async (req, res) => {
-    const id = parseInt(req.params.id);
-    const movieCredits = await getMovieCredits(id);
-    res.status(200).json(movieCredits);
+    try {
+        const id = parseInt(req.params.id);
+        if (isNaN(id) || id <= 0) {
+            throw new Error('Invalid ID');
+        }
+
+        const movieCredits = await getMovieCredits(id);
+        if (!movieCredits) {
+            res.status(404).json({ message: "No movie credits found for the provided ID." });
+        } else {
+            res.status(200).json(movieCredits);
+        }
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 }));
+
 
 router.get('/tmdb/movie/:id/image', asyncHandler(async (req, res) => {
     const id = req.params.id;

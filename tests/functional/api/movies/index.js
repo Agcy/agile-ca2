@@ -376,4 +376,53 @@ describe("Movies endpoint", () => {
         });
 
     })
+
+    // movie credits
+    describe("Movie credits endpoint", () => {
+        describe("GET /api/movies/tmdb/movie_credits/:id - Success Tests", () => {
+            it("should return movie credits for valid actor id", (done) => {
+                // Assuming that '1' is a valid actor id for testing
+                request(api)
+                    .get("/api/movies/tmdb/movie_credits/200")
+                    .set("Accept", "application/json")
+                    .expect("Content-Type", /json/)
+                    .expect(200)
+                    .end((err, res) => {
+                        expect(res.body).to.be.an("object");
+                        expect(res.body).to.have.property("cast");
+                        expect(res.body).to.have.property("crew");
+                        done();
+                    });
+            });
+        });
+
+        describe("GET /api/movies/tmdb/movie_credits/:id - Boundary Tests", () => {
+            it("should return error for non-numeric actor id", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/movie_credits/abc")
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+
+            it("should return error for negative actor id", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/movie_credits/-1")
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+        });
+
+        describe("GET /api/movies/tmdb/movie_credits/:id - Failure Tests", () => {
+            it("should return not found for non-existent actor id", (done) => {
+                // Assuming that '9999999' is a non-existent actor id for testing
+                request(api)
+                    .get("/api/movies/tmdb/movie_credits/9999999")
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+        });
+    })
 });
