@@ -193,12 +193,12 @@ describe("Users endpoint", () => {
             // 登录用户并获取令牌和用户 ID
             const res = await request(api)
                 .post("/api/users/")
-                .send({account: "user1", password: "test123@"});
-            console.info(res.body)
+                .send({
+                    account: "user1",
+                    password: "test123@"
+                });
             token = res.body.token;
             userId = res.body.user.id;
-            console.info(token + " " + userId)
-
         });
 
         // favorite movie page

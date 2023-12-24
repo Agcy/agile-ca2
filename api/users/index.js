@@ -5,26 +5,6 @@ import jwt from 'jsonwebtoken';
 import {authenticate} from "../../authenticate";
 const router = express.Router(); // eslint-disable-line
 
-// Middleware for authentication
-// const authenticate = async (req, res, next) => {
-//     const token = req.headers.authorization?.split(' ')[1]; // Bearer <token>
-//     if (!token) {
-//         return res.status(401).json({ message: 'No token provided.' });
-//     }
-//
-//     try {
-//         const decoded = jwt.verify(token, process.env.SECRET);
-//
-//         console.info(decoded)
-//
-//         const user = await User.findByUserName(decoded.username)
-//         req.user = user;
-//         next();
-//     } catch (error) {
-//         res.status(401).json({ message: 'Invalid token.' });
-//     }
-// };
-
 // Get all users
 router.get('/', async (req, res) => {
     try {
@@ -54,12 +34,9 @@ router.post('/', asyncHandler(async (req, res) => {
         }
     } catch (error) {
         if (error.name === 'ValidationError') {
-            console.info(req.body.account)
-            console.info(req.body.password)
             return res.status(400).json({success: false, msg: 'something got wrong'});
         }
         // Log the error and return a generic error message
-        console.error(error);
         res.status(500).json({success: false, msg: 'Internal server error.'});
     }
 }));
@@ -80,7 +57,6 @@ router.put('/:id', async (req, res) => {
 // get all favorite movies
 router.get('/tmdb/:id/favorites', authenticate, asyncHandler(async (req, res) => {
     const { id } = req.params;
-    console.log(id)
     if (req.user.id !== id) {
         return res.status(403).json({ message: 'Forbidden access.' });
     }
@@ -92,7 +68,6 @@ router.get('/tmdb/:id/favorites', authenticate, asyncHandler(async (req, res) =>
         }
         res.status(200).json(user.favorites);
     } catch (error) {
-        console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
 }));
@@ -312,12 +287,9 @@ async function authenticateUser(req, res) {
 
     // 判断输入的是邮箱还是用户名
     if (account.includes('@')) {
-        console.log(account)
         user = await User.findByEmail(account);
-        console.info(user)
     } else {
         user = await User.findByUserName(account);
-        console.info(user)
     }
 
     if (!user) {

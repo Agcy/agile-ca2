@@ -1,29 +1,31 @@
 import Review from './reviewModel'
 import express from 'express';
 import asyncHandler from "express-async-handler";
+import {authenticate} from "../../authenticate";
 import jwt from 'jsonwebtoken';
 
 const router = express.Router(); // eslint-disable-line
 
-router.get('/tmdb/user/:userId', asyncHandler(async (req, res) => {
+router.get('/tmdb/user/:userId', authenticate, asyncHandler(async (req, res) => {
     try{
         const { userId } = req.params;
-        const reviews = await Review.find({ userId }).populate('movieId', 'title');
-        console.info(reviews)
-        console.info(userId)
+        const reviews = await Review.find({userId});
 
-        res.status(200).json({reviews});
-    }catch (error){
-        res.status(404).json({ message: `No reviews found for user ${userId}` });
+        if (!reviews) {
+            return res.status(404).json({ message: `No reviews found for user ${userId}` });
+        }
+
+        res.status(200).json(reviews);
+    } catch (error){
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }));
+
 
 router.get('/tmdb/all', async (req, res) => {
     try {
         const reviews = await Review.find();
-        console.log(reviews)
         if (reviews && reviews.length > 0) {
-            console.info("123456"+reviews)
             res.status(200).json(reviews);
         } else {
             res.status(404).json({ message: 'No reviews found' });
