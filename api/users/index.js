@@ -5,6 +5,26 @@ import jwt from 'jsonwebtoken';
 
 const router = express.Router(); // eslint-disable-line
 
+// Middleware for authentication
+const authenticate = async (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1]; // Bearer <token>
+    if (!token) {
+        return res.status(401).json({ message: 'No token provided.' });
+    }
+
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET);
+
+        console.info(decoded)
+
+        const user = await User.findByUserName(decoded.username)
+        req.user = user;
+        next();
+    } catch (error) {
+        res.status(401).json({ message: 'Invalid token.' });
+    }
+};
+
 // Get all users
 router.get('/', async (req, res) => {
     try {
@@ -51,23 +71,25 @@ router.put('/:id', async (req, res) => {
         _id: req.params.id,
     }, req.body);
     if (result.matchedCount) {
-        res.status(200).json({code: 200, msg: 'User Updated Sucessfully'});
+        res.status(200).json({code: 200, msg: 'User Updated Successfully'});
     } else {
         res.status(404).json({code: 404, msg: 'Unable to Update User'});
     }
 });
 
 // get all favorite movies
-router.get('/tmdb/:id/favorites', asyncHandler(async (req, res) => {
+router.get('/tmdb/:id/favorites', authenticate, asyncHandler(async (req, res) => {
     const { id } = req.params;
+
     console.info(id)
-    console.info(typeof id)
+    console.info(req.user.id)
+
+    if (req.user.id !== id) {
+        return res.status(403).json({ message: 'Forbidden access.' });
+    }
+
     try {
         const user = await User.findById(id).populate('favorites');
-        // if (!user) {
-        //     return res.status(400).json({ message: 'User not found' });
-        // }
-
         res.status(200).json(user.favorites);
     } catch (error) {
         res.status(500).json({ message: 'Internal server error' });
