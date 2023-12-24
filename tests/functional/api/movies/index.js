@@ -278,4 +278,53 @@ describe("Movies endpoint", () => {
         });
 
     })
+
+    // trending movie page
+    describe("Trending movie endpoint", () => {
+        describe("GET /api/movies/tmdb/trending - Success Tests", () => {
+            it("should return trending movies for valid parameters", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/trending")
+                    .query({ page: 1, language: 'en-US' })
+                    .set("Accept", "application/json")
+                    .expect("Content-Type", /json/)
+                    .expect(200)
+                    .end((err, res) => {
+                        expect(res.body.results).to.be.an("array");
+                        done();
+                    });
+            });
+        });
+
+        describe("GET /api/movies/tmdb/trending - Boundary Tests", () => {
+            it("should handle minimum valid page number", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/trending")
+                    .query({ page: 1, language: 'en-US' })
+                    .set("Accept", "application/json")
+                    .expect(200)
+                    .end(done);
+            });
+
+            it("should return error for invalid page number", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/trending")
+                    .query({ page: 0, language: 'en-US' })
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+        });
+
+        describe("GET /api/movies/tmdb/trending - Failure Tests", () => {
+            it("should return error when parameters are missing", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/trending")
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+        });
+
+    })
 });

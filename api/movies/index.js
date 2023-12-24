@@ -101,11 +101,21 @@ router.get('/tmdb/upcoming', asyncHandler(async (req, res) => {
 
 // trending movies
 router.get('/tmdb/trending', asyncHandler(async (req, res) => {
-    const page = req.query.page
-    const language = req.query.language
-    const trendingMovies = await getTrendingMovies(language, page);
-    res.status(200).json(trendingMovies);
+    try {
+        const page = parseInt(req.query.page);
+        const language = req.query.language;
+
+        if (isNaN(page) || page <= 0 || !language) {
+            throw new Error('Invalid parameters');
+        }
+
+        const trendingMovies = await getTrendingMovies(language, page);
+        res.status(200).json(trendingMovies);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 }));
+
 
 // movies genres
 router.get('/tmdb/genres', asyncHandler(async (req, res) => {
