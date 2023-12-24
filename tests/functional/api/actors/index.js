@@ -1,0 +1,96 @@
+import chai from "chai";
+import request from "supertest";
+
+const mongoose = require("mongoose");
+import Movie from "../../../../api/movies/movieModel";
+import api from "../../../../index";
+import movies from "../../../../seedData/movies";
+// import {describe} from "mocha/lib/cli/run";
+
+const expect = chai.expect;
+let db;
+
+describe("Movies endpoint", () => {
+    before(() => {
+        mongoose.connect(process.env.MONGO_DB, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        db = mongoose.connection;
+    });
+
+    after(async () => {
+        try {
+            await db.dropDatabase();
+        } catch (error) {
+            console.log(error);
+        }
+    });
+
+    beforeEach(async () => {
+        try {
+            await Movie.deleteMany();
+            await Movie.collection.insertMany(movies);
+        } catch (err) {
+            console.error(`failed to Load user Data: ${err}`);
+        }
+    });
+    afterEach(() => {
+        api.close(); // Release PORT 8080
+    });
+
+    describe("Stored Actor list endpoint", () => {
+        describe("Stored Actor list endpoint - Success Tests", () => {
+            it("should return a list of actors for valid page and limit", (done) => {
+                request(api)
+                    .get("/api/actors/")
+                    .query({ page: 1, limit: 10 })
+                    .set("Accept", "application/json")
+                    .expect("Content-Type", /json/)
+                    .expect(200)
+                    .end((err, res) => {
+                        expect(res.body).to.be.an("object");
+                        expect(res.body).to.have.property("page", 1);
+                        expect(res.body).to.have.property("total_pages");
+                        expect(res.body).to.have.property("total_results");
+                        expect(res.body.results).to.be.an("array");
+                        done();
+                    });
+            });
+        });
+
+        describe("Stored Actor list endpoint - Boundary Tests", () => {
+            it("should handle minimum valid page and limit", (done) => {
+                request(api)
+                    .get("/api/actors/")
+                    .query({ page: 1, limit: 1 })
+                    .set("Accept", "application/json")
+                    .expect(200)
+                    .end(done);
+            });
+
+            it("should return error for invalid page and limit values", (done) => {
+                request(api)
+                    .get("/api/actors/")
+                    .query({ page: 0, limit: -1 })
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+        });
+
+        describe("Stored Actor list endpoint - Failure Tests", () => {
+            it("should return default page and limit when parameters are missing", (done) => {
+                request(api)
+                    .get("/api/actors/")
+                    .set("Accept", "application/json")
+                    .expect(200)
+                    .end((err, res) => {
+                        expect(res.body).to.have.property("page", 1);
+                        done();
+                    });
+            });
+        });
+    })
+
+});

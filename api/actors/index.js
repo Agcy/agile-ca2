@@ -12,23 +12,32 @@ const router = express.Router();
 
 // 获取演员列表
 router.get('/', asyncHandler(async (req, res) => {
-    let { page = 1, limit = 10 } = req.query;
-    [page, limit] = [+page, +limit];
+    try {
+        let { page = 1, limit = 10 } = req.query;
+        [page, limit] = [+page, +limit];
 
-    const [total_results, results] = await Promise.all([
-        actorModel.estimatedDocumentCount(),
-        actorModel.find().limit(limit).skip((page - 1) * limit)
-    ]);
-    const total_pages = Math.ceil(total_results / limit);
+        if (isNaN(page) || page <= 0 || isNaN(limit) || limit <= 0) {
+            throw new Error('Invalid page or limit');
+        }
 
-    const returnObject = {
-        page,
-        total_pages,
-        total_results,
-        results
-    };
-    res.status(200).json(returnObject);
+        const [total_results, results] = await Promise.all([
+            actorModel.estimatedDocumentCount(),
+            actorModel.find().limit(limit).skip((page - 1) * limit)
+        ]);
+        const total_pages = Math.ceil(total_results / limit);
+
+        const returnObject = {
+            page,
+            total_pages,
+            total_results,
+            results
+        };
+        res.status(200).json(returnObject);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 }));
+
 
 // 获取单个演员的详细信息
 router.get('/:id', asyncHandler(async (req, res) => {
