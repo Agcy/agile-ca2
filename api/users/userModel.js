@@ -9,7 +9,7 @@ const UserSchema = new Schema({
     email: {
         type: String,
         unique: true,
-        // required: 'Email address is required',
+        required: 'Email address is required',
         validate: {
             validator: function (email) {
                 const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

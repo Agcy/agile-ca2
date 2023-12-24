@@ -80,18 +80,19 @@ router.put('/:id', async (req, res) => {
 // get all favorite movies
 router.get('/tmdb/:id/favorites', authenticate, asyncHandler(async (req, res) => {
     const { id } = req.params;
-
-    console.info(id)
-    console.info(req.user.id)
-
+    console.log(id)
     if (req.user.id !== id) {
         return res.status(403).json({ message: 'Forbidden access.' });
     }
 
     try {
         const user = await User.findById(id).populate('favorites');
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
         res.status(200).json(user.favorites);
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: 'Internal server error' });
     }
 }));
@@ -296,9 +297,12 @@ async function authenticateUser(req, res) {
 
     // 判断输入的是邮箱还是用户名
     if (account.includes('@')) {
+        console.log(account)
         user = await User.findByEmail(account);
+        console.info(user)
     } else {
         user = await User.findByUserName(account);
+        console.info(user)
     }
 
     if (!user) {
