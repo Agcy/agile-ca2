@@ -3,7 +3,7 @@ import request from "supertest";
 const mongoose = require("mongoose");
 import Review from "../../../../api/reviews/reviewModel";
 import api from "../../../../index";
-import movies from "../../../../seedData/movies";
+import reviews from "../../../../seedData/reviews";
 import User from "../../../../api/users/userModel";
 // import {describe} from "mocha/lib/cli/run";
 
@@ -65,6 +65,7 @@ describe("Reviews endpoint", () => {
                     .get("/api/reviews/tmdb/all")
                     .expect(200)
                     .end((err, res) => {
+                        console.log(res.body)
                         expect(res.body).to.be.an("array");
                         if (res.body.length > 0) {
                             expect(res.body[0]).to.have.property("movieId");
@@ -156,7 +157,35 @@ describe("Reviews endpoint", () => {
         })
 
         // add and delete user reviews
-        describe("Add and delete user reviews", () => {
+        describe("Add user reviews", () => {
+            describe("POST /api/reviews/tmdb/:movieId - Success Test", () => {
+                let movieId = "27017";
+
+                it("should create a review successfully", (done) => {
+                    request(api)
+                        .post(`/api/reviews/tmdb/${movieId}`)
+                        .set("Authorization", `${token}`)
+                        .send({ userId: userId, author: "John Doe", review: "Great movie!", rating: 5 })
+                        .expect(201)
+                        .end((err, res) => {
+                            console.info(res.body)
+                            expect(res.body).to.have.property("review", "Great movie!");
+                            done();
+                        });
+                });
+            });
+
+            describe("POST /api/reviews/tmdb/:movieId - Failure Test", () => {
+                it("should return error for invalid review data", (done) => {
+                    request(api)
+                        .post(`/api/reviews/tmdb/invalidMovieId`)
+                        .set("Authorization", `${token}`)
+                        .send({ author: "John Doe", review: "" }) // 缺少必要字段
+                        .expect(500)
+                        .end(done);
+                });
+            });
+
 
         })
     })
