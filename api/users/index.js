@@ -99,32 +99,32 @@ router.get('/tmdb/:id/favorites', authenticate, asyncHandler(async (req, res) =>
 
 
 // add to favorite
-router.post('/tmdb/:id/favorites', asyncHandler(async (req, res) => {
+router.post('/tmdb/:id/favorites', authenticate, asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { movieId } = req.body;
-    console.info(movieId)
-    console.info(id)
 
     try {
-        await User.findByIdAndUpdate(id, {
-            $addToSet: { favorites: movieId } // 使用 $addToSet 添加电影，防止重复
-        }, {new: true});
+        if (req.user.id !== id) {
+            throw new Error('Unauthorized access');
+        }
 
+        await User.findByIdAndUpdate(id, { $addToSet: { favorites: movieId } }, { new: true });
         res.status(200).json({ message: 'Movie added to favorites' });
     } catch (error) {
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }));
 
 // delete from favorite
-router.delete('/tmdb/:id/favorites/:movieId', asyncHandler(async (req, res) => {
+router.delete('/tmdb/:id/favorites/:movieId', authenticate, asyncHandler(async (req, res) => {
     const { id, movieId } = req.params;
 
     try {
-        await User.findByIdAndUpdate(id, {
-            $pull: { favorites: movieId } // 使用 $pull 删除指定的电影
-        }, {new: true});
+        if (req.user.id !== id) {
+            throw new Error('Unauthorized access');
+        }
 
+        await User.findByIdAndUpdate(id, { $pull: { favorites: movieId } }, { new: true });
         res.status(200).json({ message: 'Movie removed from favorites' });
     } catch (error) {
         res.status(500).json({ message: 'Internal server error', error: error.message });
