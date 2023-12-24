@@ -91,6 +91,53 @@ describe("Movies endpoint", () => {
                     });
             });
         });
-    })
+    });
+
+    // local single actor
+    describe("Local single actor endpoint", () => {
+        describe("Local single actor endpoint - Success Tests", () => {
+            it("should return details of an actor for valid actor id", (done) => {
+                // Assuming that '1' is a valid actor id for testing
+                request(api)
+                    .get("/api/actors/200")
+                    .set("Accept", "application/json")
+                    .expect("Content-Type", /json/)
+                    .expect(200)
+                    .end((err, res) => {
+                        expect(res.body).to.be.an("object");
+                        done();
+                    });
+            });
+        });
+
+        describe("Local single actor endpoint - Boundary Tests", () => {
+            it("should return error for non-numeric actor id", (done) => {
+                request(api)
+                    .get("/api/actors/abc")
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+
+            it("should return error for negative actor id", (done) => {
+                request(api)
+                    .get("/api/actors/-1")
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+        });
+
+        describe("Local single actor endpoint - Failure Tests", () => {
+            it("should return not found for non-existent actor id", (done) => {
+                request(api)
+                    .get("/api/actors/9999999")
+                    .set("Accept", "application/json")
+                    .expect(404)
+                    .end(done);
+            });
+        });
+
+    });
 
 });
