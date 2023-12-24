@@ -150,10 +150,23 @@ router.get('/tmdb/movie_credits/:id', asyncHandler(async (req, res) => {
 
 
 router.get('/tmdb/movie/:id/image', asyncHandler(async (req, res) => {
-    const id = req.params.id;
-    const movieImgs = await getMovieImages(id);
-    res.status(200).json(movieImgs);
+    try {
+        const id = req.params.id;
+        if (!id || isNaN(Number(id))) {
+            throw new Error('Invalid ID');
+        }
+
+        const movieImgs = await getMovieImages(id);
+        if (!movieImgs) {
+            res.status(404).json({ message: "No images found for the provided movie ID." });
+        } else {
+            res.status(200).json(movieImgs);
+        }
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 }));
+
 
 router.get('/tmdb/movie/:id/review', asyncHandler(async (req, res) => {
     const id = req.params.id;
