@@ -237,6 +237,53 @@ describe("Movies endpoint", () => {
             });
         });
 
+    });
+
+    // actor images
+    describe("Actor images endpoint", () => {
+        describe("GET /api/actors/tmdb/images/:id - Success Tests", () => {
+            it("should return images of an actor for valid actor id", (done) => {
+                request(api)
+                    .get("/api/actors/tmdb/images/200")
+                    .set("Accept", "application/json")
+                    .expect("Content-Type", /json/)
+                    .expect(200)
+                    .end((err, res) => {
+                        expect(res.body).to.be.an("object");
+                        expect(res.body).to.have.property("profiles").that.is.an("array");
+                        done();
+                    });
+            });
+        });
+
+        describe("GET /api/actors/tmdb/images/:id - Boundary Tests", () => {
+            it("should return error for non-numeric actor id", (done) => {
+                request(api)
+                    .get("/api/actors/tmdb/images/abc")
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+
+            it("should return error for negative actor id", (done) => {
+                request(api)
+                    .get("/api/actors/tmdb/images/-1")
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+        });
+
+        describe("GET /api/actors/tmdb/images/:id - Failure Tests", () => {
+            it("should return not found for non-existent actor id", (done) => {
+                request(api)
+                    .get("/api/actors/tmdb/images/9999999")
+                    .set("Accept", "application/json")
+                    .expect(400)
+                    .end(done);
+            });
+        });
+
     })
 
 });

@@ -99,10 +99,23 @@ router.get('/tmdb/actor/:id', asyncHandler(async (req, res) => {
 
 // 获取演员图片
 router.get('/tmdb/images/:id', asyncHandler(async (req, res) => {
-    const id = parseInt(req.params.id);
-    const actorImages = await getActorImages(id);
-    res.status(200).json(actorImages);
+    try {
+        const id = parseInt(req.params.id);
+        if (isNaN(id) || id <= 0) {
+            throw new Error('Invalid ID');
+        }
+
+        const actorImages = await getActorImages(id);
+        if (!actorImages) {
+            res.status(404).json({ message: 'No images found for the provided actor ID.', status_code: 404 });
+        } else {
+            res.status(200).json(actorImages);
+        }
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 }));
+
 
 // 获取演员电影作品
 router.get('/tmdb/movie_credits/:id', asyncHandler(async (req, res) => {
