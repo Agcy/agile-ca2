@@ -7,9 +7,14 @@ const router = express.Router(); // eslint-disable-line
 
 // Get all users
 router.get('/', async (req, res) => {
-    const users = await User.find();
-    res.status(200).json(users);
+    try {
+        const users = await User.find();
+        res.status(200).json(users);
+    } catch (error) {
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
 });
+
 
 // register(Create)/Authenticate User
 router.post('/', asyncHandler(async (req, res) => {
