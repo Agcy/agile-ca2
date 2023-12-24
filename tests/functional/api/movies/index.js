@@ -327,4 +327,53 @@ describe("Movies endpoint", () => {
         });
 
     })
+
+    // movie genres
+    describe("Movie genres endpoint", () => {
+        describe("GET /api/movies/tmdb/genres - Success Tests", () => {
+            it("should return movie genres for valid language", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/genres")
+                    .query({ language: 'en-US' })
+                    .set("Accept", "application/json")
+                    .expect("Content-Type", /json/)
+                    .expect(200)
+                    .end((err, res) => {
+                        expect(res.body.genres).to.be.an("array");
+                        done();
+                    });
+            });
+        });
+
+        describe("GET /api/movies/tmdb/genres - Boundary Tests", () => {
+            it("should handle valid language code", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/genres")
+                    .query({ language: 'en-US' })
+                    .set("Accept", "application/json")
+                    .expect(200)
+                    .end(done);
+            });
+
+            it("should handle invalid language code", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/genres")
+                    .query({ language: 'invalid-code' })
+                    .set("Accept", "application/json")
+                    .expect(200)
+                    .end(done);
+            });
+        });
+
+        describe("GET /api/movies/tmdb/genres - Failure Tests", () => {
+            it("should return default genres when language is missing", (done) => {
+                request(api)
+                    .get("/api/movies/tmdb/genres")
+                    .set("Accept", "application/json")
+                    .expect(200)
+                    .end(done);
+            });
+        });
+
+    })
 });

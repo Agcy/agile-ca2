@@ -116,13 +116,18 @@ router.get('/tmdb/trending', asyncHandler(async (req, res) => {
     }
 }));
 
-
 // movies genres
 router.get('/tmdb/genres', asyncHandler(async (req, res) => {
-    const language = req.query.language
-    const moviesGenres = await getMoviesGenres(language);
-    res.status(200).json(moviesGenres)
+    try {
+        const language = req.query.language || 'en-US'; // Default to 'en-US' if language is not provided
+
+        const moviesGenres = await getMoviesGenres(language);
+        res.status(200).json(moviesGenres);
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
 }));
+
 
 // 获取演员电影作品
 router.get('/tmdb/movie_credits/:id', asyncHandler(async (req, res) => {
