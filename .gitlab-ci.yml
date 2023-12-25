@@ -41,7 +41,7 @@ test_api:
   stage: test
   script:
     - npm test
-    - npm test:coveralls
+    - npm coveralls
 
 deploy_staging:
   image: ruby:latest
