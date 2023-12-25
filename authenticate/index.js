@@ -33,7 +33,7 @@ const authenticate = async (req, res, next) => {
     try {
         const decoded = jwt.verify(token, process.env.SECRET);
 
-        console.info(decoded)
+        // console.info(decoded)
 
         const user = await User.findByUserName(decoded.username)
         req.user = user;

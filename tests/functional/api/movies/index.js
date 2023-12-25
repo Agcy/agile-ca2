@@ -45,8 +45,8 @@ describe("Movies endpoint", () => {
                 .set("Accept", "application/json")
                 .expect(200)
                 .end((err, res) => {
-                    expect(res.body).to.be.a("array");
-                    expect(res.body.length).to.equal(20);
+                    expect(res.body.results).to.be.a("array");
+                    expect(res.body.results.length).to.equal(10);
                     done();
                 });
         });
