@@ -40,7 +40,7 @@ Build_api:
 test_api:
   stage: test
   script:
-    - npm test
+    - npm test:coveralls
 
 deploy_staging:
   image: ruby:latest
@@ -51,6 +51,6 @@ deploy_staging:
     - apt-get update -qy
     - apt-get install -y ruby-dev
     - gem install dpl
-  script:  
+  script:
     - dpl --provider=heroku --app=$HEROKU_APP_NAME_STAGING --api-key=$HEROKU_API_KEY
     - echo "Deployed to staging server"
