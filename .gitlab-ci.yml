@@ -40,6 +40,7 @@ Build_api:
 test_api:
   stage: test
   script:
+    - npm test
     - npm test:coveralls
 
 deploy_staging:
