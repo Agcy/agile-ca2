@@ -6,7 +6,7 @@ import './db';
 import './seedData'
 import reviewsRouter from './api/reviews';
 import usersRouter from './api/users';
-import authenticate from './authenticate';
+import {passport} from "./authenticate";
 import cors from "cors";
 import defaultErrHandler from "./errHandler";
 
@@ -15,11 +15,10 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT;
 
-// app.use(passport.initialize());
-// app.use('/api/movies', passport.authenticate('jwt', {session: false}), moviesRouter);
+app.use(passport.initialize());
+
 app.use(cors());
 app.use(express.json());
-// app.use(express.json());
 app.use('/api/users', usersRouter);
 app.use('/api/actors',  actorsRouter);
 app.use('/api/movies',  moviesRouter);

@@ -5,7 +5,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports["default"] = void 0;
-var _movieModel = _interopRequireDefault(require("./movieModel"));
+var _actorModel = _interopRequireDefault(require("./actorModel"));
 var _tmdbApi = require("../tmdb-api");
 var _expressAsyncHandler = _interopRequireDefault(require("express-async-handler"));
 var _express = _interopRequireDefault(require("express"));
@@ -20,27 +20,33 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 var router = _express["default"].Router();
+
+// 获取演员列表
 router.get('/', (0, _expressAsyncHandler["default"])( /*#__PURE__*/function () {
   var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee(req, res) {
     var _req$query, _req$query$page, page, _req$query$limit, limit, _ref2, _yield$Promise$all, _yield$Promise$all2, total_results, results, total_pages, returnObject;
     return _regeneratorRuntime().wrap(function _callee$(_context) {
       while (1) switch (_context.prev = _context.next) {
         case 0:
-          _req$query = req.query, _req$query$page = _req$query.page, page = _req$query$page === void 0 ? 1 : _req$query$page, _req$query$limit = _req$query.limit, limit = _req$query$limit === void 0 ? 10 : _req$query$limit; // destructure page and limit and set default values
-          //trick to convert to numeric (req.query will contain string values)
-          // Parallel execution of counting movies and getting movies using movieModel
+          _context.prev = 0;
+          _req$query = req.query, _req$query$page = _req$query.page, page = _req$query$page === void 0 ? 1 : _req$query$page, _req$query$limit = _req$query.limit, limit = _req$query$limit === void 0 ? 10 : _req$query$limit;
           _ref2 = [+page, +limit];
           page = _ref2[0];
           limit = _ref2[1];
-          _context.next = 6;
-          return Promise.all([_movieModel["default"].estimatedDocumentCount(), _movieModel["default"].find().limit(limit).skip((page - 1) * limit)]);
-        case 6:
+          if (!(isNaN(page) || page <= 0 || isNaN(limit) || limit <= 0)) {
+            _context.next = 7;
+            break;
+          }
+          throw new Error('Invalid page or limit');
+        case 7:
+          _context.next = 9;
+          return Promise.all([_actorModel["default"].estimatedDocumentCount(), _actorModel["default"].find().limit(limit).skip((page - 1) * limit)]);
+        case 9:
           _yield$Promise$all = _context.sent;
           _yield$Promise$all2 = _slicedToArray(_yield$Promise$all, 2);
           total_results = _yield$Promise$all2[0];
           results = _yield$Promise$all2[1];
-          total_pages = Math.ceil(total_results / limit); //Calculate total number of pages (= total No Docs/Number of docs per page)
-          //construct return Object and insert into response object
+          total_pages = Math.ceil(total_results / limit);
           returnObject = {
             page: page,
             total_pages: total_pages,
@@ -48,52 +54,75 @@ router.get('/', (0, _expressAsyncHandler["default"])( /*#__PURE__*/function () {
             results: results
           };
           res.status(200).json(returnObject);
-        case 13:
+          _context.next = 21;
+          break;
+        case 18:
+          _context.prev = 18;
+          _context.t0 = _context["catch"](0);
+          res.status(400).json({
+            error: _context.t0.message
+          });
+        case 21:
         case "end":
           return _context.stop();
       }
-    }, _callee);
+    }, _callee, null, [[0, 18]]);
   }));
   return function (_x, _x2) {
     return _ref.apply(this, arguments);
   };
 }()));
 
-// Get movie details
+// 获取单个演员的详细信息
 router.get('/:id', (0, _expressAsyncHandler["default"])( /*#__PURE__*/function () {
   var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2(req, res) {
-    var id, movie;
+    var id, actor;
     return _regeneratorRuntime().wrap(function _callee2$(_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
+          _context2.prev = 0;
           id = parseInt(req.params.id);
-          _context2.next = 3;
-          return _movieModel["default"].findByMovieDBId(id);
-        case 3:
-          movie = _context2.sent;
-          if (movie) {
-            res.status(200).json(movie);
-          } else {
+          if (!(isNaN(id) || id <= 0)) {
+            _context2.next = 4;
+            break;
+          }
+          throw new Error('Invalid ID');
+        case 4:
+          _context2.next = 6;
+          return _actorModel["default"].findByActorDBId(id);
+        case 6:
+          actor = _context2.sent;
+          if (!actor) {
             res.status(404).json({
-              message: 'The movie you requested could not be found.',
+              message: 'The actor you requested could not be found.',
               status_code: 404
             });
+          } else {
+            res.status(200).json(actor);
           }
-        case 5:
+          _context2.next = 13;
+          break;
+        case 10:
+          _context2.prev = 10;
+          _context2.t0 = _context2["catch"](0);
+          res.status(400).json({
+            error: _context2.t0.message
+          });
+        case 13:
         case "end":
           return _context2.stop();
       }
-    }, _callee2);
+    }, _callee2, null, [[0, 10]]);
   }));
   return function (_x3, _x4) {
     return _ref3.apply(this, arguments);
   };
 }()));
 
-// discover movies
-router.get('/tmdb/home', (0, _expressAsyncHandler["default"])( /*#__PURE__*/function () {
+// 获取流行演员
+router.get('/tmdb/actors', (0, _expressAsyncHandler["default"])( /*#__PURE__*/function () {
   var _ref4 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3(req, res) {
-    var page, language, movies;
+    var page, language, popularActors;
     return _regeneratorRuntime().wrap(function _callee3$(_context3) {
       while (1) switch (_context3.prev = _context3.next) {
         case 0:
@@ -104,13 +133,13 @@ router.get('/tmdb/home', (0, _expressAsyncHandler["default"])( /*#__PURE__*/func
             _context3.next = 5;
             break;
           }
-          throw new Error('Invalid parameters');
+          throw new Error('Invalid page or language');
         case 5:
           _context3.next = 7;
-          return (0, _tmdbApi.getMovies)(page, language);
+          return (0, _tmdbApi.getPopularActors)(language, page);
         case 7:
-          movies = _context3.sent;
-          res.status(200).json(movies);
+          popularActors = _context3.sent;
+          res.status(200).json(popularActors);
           _context3.next = 14;
           break;
         case 11:
@@ -130,10 +159,10 @@ router.get('/tmdb/home', (0, _expressAsyncHandler["default"])( /*#__PURE__*/func
   };
 }()));
 
-// single movie
-router.get('/tmdb/movie/:id', (0, _expressAsyncHandler["default"])( /*#__PURE__*/function () {
+// 获取单个演员
+router.get('/tmdb/actor/:id', (0, _expressAsyncHandler["default"])( /*#__PURE__*/function () {
   var _ref5 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4(req, res) {
-    var id, movie;
+    var id, actor;
     return _regeneratorRuntime().wrap(function _callee4$(_context4) {
       while (1) switch (_context4.prev = _context4.next) {
         case 0:
@@ -146,15 +175,16 @@ router.get('/tmdb/movie/:id', (0, _expressAsyncHandler["default"])( /*#__PURE__*
           throw new Error('Invalid ID');
         case 4:
           _context4.next = 6;
-          return (0, _tmdbApi.getMovie)(id);
+          return (0, _tmdbApi.getActor)(id);
         case 6:
-          movie = _context4.sent;
-          if (!movie) {
+          actor = _context4.sent;
+          if (!actor) {
             res.status(404).json({
-              message: "The resource you requested could not be found."
+              message: 'The actor you requested could not be found.',
+              status_code: 404
             });
           } else {
-            res.status(200).json(movie);
+            res.status(200).json(actor);
           }
           _context4.next = 13;
           break;
@@ -175,67 +205,80 @@ router.get('/tmdb/movie/:id', (0, _expressAsyncHandler["default"])( /*#__PURE__*
   };
 }()));
 
-// upcoming movies
-router.get('/tmdb/upcoming', (0, _expressAsyncHandler["default"])( /*#__PURE__*/function () {
+// 获取演员图片
+router.get('/tmdb/images/:id', (0, _expressAsyncHandler["default"])( /*#__PURE__*/function () {
   var _ref6 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee5(req, res) {
-    var page, language, upcomingMovies;
+    var id, actorImages;
     return _regeneratorRuntime().wrap(function _callee5$(_context5) {
       while (1) switch (_context5.prev = _context5.next) {
         case 0:
           _context5.prev = 0;
-          page = parseInt(req.query.page);
-          language = req.query.language;
-          if (!(isNaN(page) || page <= 0 || !language)) {
-            _context5.next = 5;
+          id = parseInt(req.params.id);
+          if (!(isNaN(id) || id <= 0)) {
+            _context5.next = 4;
             break;
           }
-          throw new Error('Invalid parameters');
-        case 5:
-          _context5.next = 7;
-          return (0, _tmdbApi.getUpcomingMovies)(language, page);
-        case 7:
-          upcomingMovies = _context5.sent;
-          res.status(200).json(upcomingMovies);
-          _context5.next = 14;
+          throw new Error('Invalid ID');
+        case 4:
+          _context5.next = 6;
+          return (0, _tmdbApi.getActorImages)(id);
+        case 6:
+          actorImages = _context5.sent;
+          if (!actorImages) {
+            res.status(404).json({
+              message: 'No images found for the provided actor ID.',
+              status_code: 404
+            });
+          } else {
+            res.status(200).json(actorImages);
+          }
+          _context5.next = 13;
           break;
-        case 11:
-          _context5.prev = 11;
+        case 10:
+          _context5.prev = 10;
           _context5.t0 = _context5["catch"](0);
           res.status(400).json({
             error: _context5.t0.message
           });
-        case 14:
+        case 13:
         case "end":
           return _context5.stop();
       }
-    }, _callee5, null, [[0, 11]]);
+    }, _callee5, null, [[0, 10]]);
   }));
   return function (_x9, _x10) {
     return _ref6.apply(this, arguments);
   };
 }()));
 
-// trending movies
-router.get('/tmdb/trending', (0, _expressAsyncHandler["default"])( /*#__PURE__*/function () {
+// 获取演员电影作品
+router.get('/tmdb/movie_credits/:id', (0, _expressAsyncHandler["default"])( /*#__PURE__*/function () {
   var _ref7 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee6(req, res) {
-    var page, language, trendingMovies;
+    var id, language, actorMovieCredits;
     return _regeneratorRuntime().wrap(function _callee6$(_context6) {
       while (1) switch (_context6.prev = _context6.next) {
         case 0:
           _context6.prev = 0;
-          page = parseInt(req.query.page);
-          language = req.query.language;
-          if (!(isNaN(page) || page <= 0 || !language)) {
+          id = parseInt(req.params.id);
+          language = req.query.language || 'en-US'; // Default language if not provided
+          if (!(isNaN(id) || id <= 0)) {
             _context6.next = 5;
             break;
           }
-          throw new Error('Invalid parameters');
+          throw new Error('Invalid ID');
         case 5:
           _context6.next = 7;
-          return (0, _tmdbApi.getTrendingMovies)(language, page);
+          return (0, _tmdbApi.getActorMovieCredits)(id, language);
         case 7:
-          trendingMovies = _context6.sent;
-          res.status(200).json(trendingMovies);
+          actorMovieCredits = _context6.sent;
+          if (!actorMovieCredits) {
+            res.status(404).json({
+              message: 'No movie credits found for the provided actor ID.',
+              status_code: 404
+            });
+          } else {
+            res.status(200).json(actorMovieCredits);
+          }
           _context6.next = 14;
           break;
         case 11:
@@ -252,174 +295,6 @@ router.get('/tmdb/trending', (0, _expressAsyncHandler["default"])( /*#__PURE__*/
   }));
   return function (_x11, _x12) {
     return _ref7.apply(this, arguments);
-  };
-}()));
-
-// movies genres
-router.get('/tmdb/genres', (0, _expressAsyncHandler["default"])( /*#__PURE__*/function () {
-  var _ref8 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee7(req, res) {
-    var language, moviesGenres;
-    return _regeneratorRuntime().wrap(function _callee7$(_context7) {
-      while (1) switch (_context7.prev = _context7.next) {
-        case 0:
-          _context7.prev = 0;
-          language = req.query.language || 'en-US'; // Default to 'en-US' if language is not provided
-          _context7.next = 4;
-          return (0, _tmdbApi.getMoviesGenres)(language);
-        case 4:
-          moviesGenres = _context7.sent;
-          res.status(200).json(moviesGenres);
-          _context7.next = 11;
-          break;
-        case 8:
-          _context7.prev = 8;
-          _context7.t0 = _context7["catch"](0);
-          res.status(400).json({
-            error: _context7.t0.message
-          });
-        case 11:
-        case "end":
-          return _context7.stop();
-      }
-    }, _callee7, null, [[0, 8]]);
-  }));
-  return function (_x13, _x14) {
-    return _ref8.apply(this, arguments);
-  };
-}()));
-
-// 获取演员电影作品
-router.get('/tmdb/movie_credits/:id', (0, _expressAsyncHandler["default"])( /*#__PURE__*/function () {
-  var _ref9 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee8(req, res) {
-    var id, movieCredits;
-    return _regeneratorRuntime().wrap(function _callee8$(_context8) {
-      while (1) switch (_context8.prev = _context8.next) {
-        case 0:
-          _context8.prev = 0;
-          id = parseInt(req.params.id);
-          if (!(isNaN(id) || id <= 0)) {
-            _context8.next = 4;
-            break;
-          }
-          throw new Error('Invalid ID');
-        case 4:
-          _context8.next = 6;
-          return (0, _tmdbApi.getMovieCredits)(id);
-        case 6:
-          movieCredits = _context8.sent;
-          if (!movieCredits) {
-            res.status(404).json({
-              message: "No movie credits found for the provided ID."
-            });
-          } else {
-            res.status(200).json(movieCredits);
-          }
-          _context8.next = 13;
-          break;
-        case 10:
-          _context8.prev = 10;
-          _context8.t0 = _context8["catch"](0);
-          res.status(400).json({
-            error: _context8.t0.message
-          });
-        case 13:
-        case "end":
-          return _context8.stop();
-      }
-    }, _callee8, null, [[0, 10]]);
-  }));
-  return function (_x15, _x16) {
-    return _ref9.apply(this, arguments);
-  };
-}()));
-
-// movie images
-router.get('/tmdb/movie/:id/image', (0, _expressAsyncHandler["default"])( /*#__PURE__*/function () {
-  var _ref10 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee9(req, res) {
-    var id, movieImgs;
-    return _regeneratorRuntime().wrap(function _callee9$(_context9) {
-      while (1) switch (_context9.prev = _context9.next) {
-        case 0:
-          _context9.prev = 0;
-          id = req.params.id;
-          if (!(!id || isNaN(Number(id)))) {
-            _context9.next = 4;
-            break;
-          }
-          throw new Error('Invalid ID');
-        case 4:
-          _context9.next = 6;
-          return (0, _tmdbApi.getMovieImages)(id);
-        case 6:
-          movieImgs = _context9.sent;
-          if (!movieImgs) {
-            res.status(404).json({
-              message: "No images found for the provided movie ID."
-            });
-          } else {
-            res.status(200).json(movieImgs);
-          }
-          _context9.next = 13;
-          break;
-        case 10:
-          _context9.prev = 10;
-          _context9.t0 = _context9["catch"](0);
-          res.status(400).json({
-            error: _context9.t0.message
-          });
-        case 13:
-        case "end":
-          return _context9.stop();
-      }
-    }, _callee9, null, [[0, 10]]);
-  }));
-  return function (_x17, _x18) {
-    return _ref10.apply(this, arguments);
-  };
-}()));
-
-//reviews
-router.get('/tmdb/movie/:id/review', (0, _expressAsyncHandler["default"])( /*#__PURE__*/function () {
-  var _ref11 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee10(req, res) {
-    var id, movieReviews;
-    return _regeneratorRuntime().wrap(function _callee10$(_context10) {
-      while (1) switch (_context10.prev = _context10.next) {
-        case 0:
-          _context10.prev = 0;
-          id = req.params.id;
-          if (!(!id || isNaN(Number(id)))) {
-            _context10.next = 4;
-            break;
-          }
-          throw new Error('Invalid ID');
-        case 4:
-          _context10.next = 6;
-          return (0, _tmdbApi.getMovieReviews)(id);
-        case 6:
-          movieReviews = _context10.sent;
-          if (!movieReviews) {
-            res.status(404).json({
-              message: "No reviews found for the provided movie ID."
-            });
-          } else {
-            res.status(200).json(movieReviews);
-          }
-          _context10.next = 13;
-          break;
-        case 10:
-          _context10.prev = 10;
-          _context10.t0 = _context10["catch"](0);
-          res.status(400).json({
-            error: _context10.t0.message
-          });
-        case 13:
-        case "end":
-          return _context10.stop();
-      }
-    }, _callee10, null, [[0, 10]]);
-  }));
-  return function (_x19, _x20) {
-    return _ref11.apply(this, arguments);
   };
 }()));
 var _default = exports["default"] = router;

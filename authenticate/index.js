@@ -4,24 +4,23 @@ import UserModel from './../api/users/userModel';
 import dotenv from 'dotenv';
 import jwt from "jsonwebtoken";
 import User from "../api/users/userModel";
-
 dotenv.config();
 
-// const JWTStrategy = passportJWT.Strategy;
-// const ExtractJWT = passportJWT.ExtractJwt;
-//
-// let jwtOptions = {};
-// jwtOptions.jwtFromRequest = ExtractJWT.fromAuthHeaderAsBearerToken();
-// jwtOptions.secretOrKey = process.env.SECRET;
-// const strategy = new JWTStrategy(jwtOptions, async (payload, next) => {
-//     const user = await UserModel.findByUserName(payload);
-//     if (user) {
-//         next(null, user);
-//     } else {
-//         next(null, false);
-//     }
-// });
-// passport.use(strategy);
+const JWTStrategy = passportJWT.Strategy;
+const ExtractJWT = passportJWT.ExtractJwt;
+
+let jwtOptions = {};
+jwtOptions.jwtFromRequest = ExtractJWT.fromAuthHeaderAsBearerToken();
+jwtOptions.secretOrKey = process.env.SECRET;
+const strategy = new JWTStrategy(jwtOptions, async (payload, next) => {
+    const user = await UserModel.findByUserName(payload);
+    if (user) {
+        next(null, user);
+    } else {
+        next(null, false);
+    }
+});
+passport.use(strategy);
 
 // 自定义身份验证中间件
 const authenticate = async (req, res, next) => {
@@ -43,4 +42,4 @@ const authenticate = async (req, res, next) => {
     }
 };
 
-export { authenticate };
+export { authenticate, passport };

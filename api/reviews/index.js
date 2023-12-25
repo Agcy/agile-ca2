@@ -2,7 +2,6 @@ import Review from './reviewModel'
 import express from 'express';
 import asyncHandler from "express-async-handler";
 import {authenticate} from "../../authenticate";
-import jwt from 'jsonwebtoken';
 
 const router = express.Router(); // eslint-disable-line
 
@@ -69,10 +68,6 @@ router.delete('/tmdb/:reviewId', authenticate, asyncHandler(async (req, res) => 
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 }));
-
-
-
-
 
 export default router;
 
