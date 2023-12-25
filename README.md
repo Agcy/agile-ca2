@@ -1,5 +1,7 @@
 # Assignment 2 - Agile Software Practice.
 
+[![Coverage Status](https://coveralls.io/repos/gitlab/liang765407782/agile-ca2/badge.svg?branch=)](https://coveralls.io/gitlab/liang765407782/agile-ca2?branch=)
+
 Name: Haopeng Liang
 
 ## API endpoints.
