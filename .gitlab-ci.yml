@@ -40,6 +40,7 @@ Build_api:
 test_api:
   stage: test
   script:
+    - export CI_BRANCH=$CI_COMMIT_REF_NAME
     - npm run test:coveralls
 
 deploy_staging:
