@@ -1,9 +1,11 @@
-services:
-  - docker
+language: node_js
 
-before_install:
-  - docker pull node:latest # 使用包含最新 GLIBC 的 Node.js 镜像
-  - docker run -d -v $(pwd):/app node:latest /bin/sh -c "cd /app; npm install"
+node_js:
+  - "16.20.2"
+
+before_script:
+  - npm install
 
 script:
-  - docker run -v $(pwd):/app node:latest /bin/sh -c "cd /app; npm run lint; npm run test:coveralls"
+  - npm run lint
+  - npm run test:coveralls
