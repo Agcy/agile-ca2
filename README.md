@@ -2,6 +2,7 @@
 
 [![Coverage Status](https://coveralls.io/repos/gitlab/liang765407782/agile-ca2/badge.svg?branch=)](https://coveralls.io/gitlab/liang765407782/agile-ca2?branch=)
 [![Build Status](https://app.travis-ci.com/Agcy/agile-ca2.svg?branch=main)](https://app.travis-ci.com/Agcy/agile-ca2)
+[![Netlify Status](https://api.netlify.com/api/v1/badges/8705f49b-e532-409b-a2d5-82a9ca7b6fb7/deploy-status)](https://app.netlify.com/sites/amazing-quokka-17aa5c/deploys)
 
 Name: Haopeng Liang
 
