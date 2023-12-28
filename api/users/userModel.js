@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
-import {MovieSchema} from "../movies/movieModel"
 
 const Schema = mongoose.Schema;
 
