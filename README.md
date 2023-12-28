@@ -297,4 +297,42 @@ https://dashboard.heroku.com/apps/movies-api-staging-doc ]
 
 Sspecify the URL of the Coveralls webpage that contains your tests' code coverage metrics.
 
+| File                                   | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s              |
+| -------------------------------------- | ------- | -------- | ------- | ------- | ------------------------------ |
+| All files                              | 94.94   | 70.02    | 97.1    | 96.99   |                                |
+| agile-ca2                              | 100     | 100      | 100     | 100     |                                |
+| index.js                               | 100     | 100      | 100     | 100     |                                |
+| agile-ca2/api                          | 87.32   | 60.46    | 87.17   | 86.76   |                                |
+| tmdb-api.js                            | 87.32   | 60.46    | 87.17   | 86.76   | 10,15,41,46,95,100,109,114,157 |
+| agile-ca2/api/actors                   | 96.85   | 81.18    | 100     | 94.8    |                                |
+| actorModel.js                          | 100     | 100      | 100     | 100     |                                |
+| index.js                               | 96.66   | 80.8     | 100     | 94.36   | 54,90,110,132                  |
+| agile-ca2/api/movies                   | 97.76   | 84.12    | 100     | 97.14   |                                |
+| index.js                               | 97.67   | 83.87    | 100     | 96.96   | 75,142,161                     |
+| movieModel.js                          | 100     | 100      | 100     | 100     |                                |
+| agile-ca2/api/reviews                  | 95.77   | 74.54    | 100     | 100     |                                |
+| index.js                               | 95.45   | 73.58    | 100     | 100     | 2,11-24,51                     |
+| reviewModel.js                         | 100     | 100      | 100     | 100     |                                |
+| agile-ca2/api/users                    | 88.02   | 72.81    | 93.24   | 94.73   |                                |
+| index.js                               | 87.77   | 76.66    | 94.82   | 95.1    | 46-54,313                      |
+| userModel.js                           | 89.74   | 54.05    | 87.5    | 92.85   | 18,30                          |
+| agile-ca2/authenticate                 | 81.39   | 55       | 70      | 83.87   |                                |
+| index.js                               | 81.39   | 55       | 70      | 83.87   | 16-21                          |
+| agile-ca2/db                           | 83.33   | 100      | 50      | 81.81   |                                |
+| index.js                               | 83.33   | 100      | 50      | 81.81   | 11,14                          |
+| agile-ca2/errHandler                   | 80      | 50       | 100     | 80      |                                |
+| index.js                               | 80      | 50       | 100     | 80      | 5                              |
+| agile-ca2/seedData                     | 95.23   | 54.16    | 100     | 100     |                                |
+| index.js                               | 94.54   | 52.17    | 100     | 100     | 2-50                           |
+| movies.js                              | 100     | 100      | 100     | 100     |                                |
+| reviews.js                             | 100     | 100      | 100     | 100     |                                |
+| users.js                               | 100     | 100      | 100     | 100     |                                |
+| agile-ca2/tests/functional/api/actors  | 99.2    | 51.51    | 100     | 100     |                                |
+| index.js                               | 99.2    | 51.51    | 100     | 100     | 2,22-30                        |
+| agile-ca2/tests/functional/api/movies  | 99.45   | 51.51    | 100     | 100     |                                |
+| index.js                               | 99.45   | 51.51    | 100     | 100     | 2,22-30                        |
+| agile-ca2/tests/functional/api/reviews | 98.98   | 61.36    | 100     | 100     |                                |
+| index.js                               | 98.98   | 61.36    | 100     | 100     | 2,26-91                        |
+| agile-ca2/tests/functional/api/users   | 99.41   | 57.89    | 100     | 100     |                                |
+| index.js                               | 99.41   | 57.89    | 100     | 100     | 2,25-32                        |
 State any other independent learning you achieved while completing this assignment.
