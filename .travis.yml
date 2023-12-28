@@ -1,1 +1,13 @@
-after_success: npm run coverage
+sudo: false
+
+language: node_js
+
+node_js:
+  - node
+
+script:
+  - npm run lint
+  - npm run test:coveralls
+
+notifications:
+  email: false

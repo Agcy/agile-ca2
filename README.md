@@ -1,6 +1,7 @@
 # Assignment 2 - Agile Software Practice.
 
-[![Coverage Status](https://coveralls.io/repos/gitlab/liang765407782/agile-ca2/badge.svg?branch=)](https://coveralls.io/gitlab/liang765407782/agile-ca2?branch=main)
+[![Coverage Status](https://coveralls.io/repos/gitlab/liang765407782/agile-ca2/badge.svg?branch=)](https://coveralls.io/gitlab/liang765407782/agile-ca2?branch=)
+[![Build Status](https://app.travis-ci.com/Agcy/agile-ca2.svg?branch=main)](https://app.travis-ci.com/Agcy/agile-ca2)
 
 Name: Haopeng Liang
 
