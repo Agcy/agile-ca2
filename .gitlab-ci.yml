@@ -57,8 +57,34 @@ deploy_staging:
     - gem install dpl
   script:
     - netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod
-    - echo "已部署到 Netlify 预发布服务器"
+    - echo "Already Deploy Netlify to pre publish server"
     - dpl --provider=heroku --app=$HEROKU_APP_NAME_STAGING --api-key=$HEROKU_API_KEY
-    - echo "已部署到 Heroku 预发布服务器"
+    - echo "Already Deploy Heroku to pre publish server"
 
+# Auto
+continuous_deployment_production:
+  image: ruby:latest
+  only:
+    - main
+  stage: deployment
+  before_script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+  script:
+    - dpl --provider=heroku --app=$HEROKU_APP_NAME_PRODUCTION --api-key=$HEROKU_API_KEY
+    - echo "Automated deployment to production servers"
 
+continuous_delivery_production:
+  image: ruby:latest
+  only:
+    - develop
+  stage: delivery
+  when: manual
+  before_script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+  script:
+    - dpl --provider=heroku --app=$HEROKU_APP_NAME_PRODUCTION --api-key=$HEROKU_API_KEY
+    - echo "Manual delivery to production servers"
