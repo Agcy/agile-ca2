@@ -8,7 +8,7 @@ Name: Haopeng Liang
 
 ## API endpoints.
 
-[List the Web API's endpoints and state the purpose of each one. Indicate those that require authentication.]
+Can visit the route here [SWAGGER HUB](https://app.swaggerhub.com/apis/LIANG765407782/web-ca_2/1.0)
 
 movies:
 
@@ -280,60 +280,103 @@ database connected to test on ac-lykofio-shard-00-00.ljfob5w.mongodb.net
 
 ~~~
 
-[ Markdown Tip: By wrapping the test results in fences (~~~), GitHub will display it in a 'box' and preserve any formatting.]
-
-NOTE: Your test code should only contain the test cases you implemented. Your assignment submission  must remove the test cases (it blocks) developed in the labs.
-
 ## Deployments.
 
-Specify the URLs of your deployments, both staging and production, e.g.
+staging
 
-https://movies-api-staging-doc-9200283e0b04.herokuapp.com/api/movies
+https://hpl-movies-api-58c402a06adc.herokuapp.com/api/movies
 
-[ I do NOT need the URL of the app on your Heroku dashboard as this is private, e.g.
+https://hpl-movies-api-58c402a06adc.herokuapp.com/api/users
 
-https://dashboard.heroku.com/apps/movies-api-staging-doc ]
+production
+
+https://hpl-movies-api-58c402a06adc.herokuapp.com/api/movies
+
+https://hpl-movies-api-58c402a06adc.herokuapp.com/api/users
+
+GitLab CI
+
+![image-20231229154746314](./images/image-20231229154746314.png)
 
 ## Independent Learning (if relevant)
 
-Sspecify the URL of the Coveralls webpage that contains your tests' code coverage metrics.
+Istanbul Generated Code Coverage Reports:
 
-| File                                   | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s              |
-| -------------------------------------- | ------- | -------- | ------- | ------- | ------------------------------ |
-| All files                              | 94.94   | 70.02    | 97.1    | 96.99   |                                |
-| agile-ca2                              | 100     | 100      | 100     | 100     |                                |
-| index.js                               | 100     | 100      | 100     | 100     |                                |
-| agile-ca2/api                          | 87.32   | 60.46    | 87.17   | 86.76   |                                |
-| tmdb-api.js                            | 87.32   | 60.46    | 87.17   | 86.76   | 10,15,41,46,95,100,109,114,157 |
-| agile-ca2/api/actors                   | 96.85   | 81.18    | 100     | 94.8    |                                |
-| actorModel.js                          | 100     | 100      | 100     | 100     |                                |
-| index.js                               | 96.66   | 80.8     | 100     | 94.36   | 54,90,110,132                  |
-| agile-ca2/api/movies                   | 97.76   | 84.12    | 100     | 97.14   |                                |
-| index.js                               | 97.67   | 83.87    | 100     | 96.96   | 75,142,161                     |
-| movieModel.js                          | 100     | 100      | 100     | 100     |                                |
-| agile-ca2/api/reviews                  | 95.77   | 74.54    | 100     | 100     |                                |
-| index.js                               | 95.45   | 73.58    | 100     | 100     | 2,11-24,51                     |
-| reviewModel.js                         | 100     | 100      | 100     | 100     |                                |
-| agile-ca2/api/users                    | 88.02   | 72.81    | 93.24   | 94.73   |                                |
-| index.js                               | 87.77   | 76.66    | 94.82   | 95.1    | 46-54,313                      |
-| userModel.js                           | 89.74   | 54.05    | 87.5    | 92.85   | 18,30                          |
-| agile-ca2/authenticate                 | 81.39   | 55       | 70      | 83.87   |                                |
-| index.js                               | 81.39   | 55       | 70      | 83.87   | 16-21                          |
-| agile-ca2/db                           | 83.33   | 100      | 50      | 81.81   |                                |
-| index.js                               | 83.33   | 100      | 50      | 81.81   | 11,14                          |
-| agile-ca2/errHandler                   | 80      | 50       | 100     | 80      |                                |
-| index.js                               | 80      | 50       | 100     | 80      | 5                              |
-| agile-ca2/seedData                     | 95.23   | 54.16    | 100     | 100     |                                |
-| index.js                               | 94.54   | 52.17    | 100     | 100     | 2-50                           |
-| movies.js                              | 100     | 100      | 100     | 100     |                                |
-| reviews.js                             | 100     | 100      | 100     | 100     |                                |
-| users.js                               | 100     | 100      | 100     | 100     |                                |
-| agile-ca2/tests/functional/api/actors  | 99.2    | 51.51    | 100     | 100     |                                |
-| index.js                               | 99.2    | 51.51    | 100     | 100     | 2,22-30                        |
-| agile-ca2/tests/functional/api/movies  | 99.45   | 51.51    | 100     | 100     |                                |
-| index.js                               | 99.45   | 51.51    | 100     | 100     | 2,22-30                        |
-| agile-ca2/tests/functional/api/reviews | 98.98   | 61.36    | 100     | 100     |                                |
-| index.js                               | 98.98   | 61.36    | 100     | 100     | 2,26-91                        |
-| agile-ca2/tests/functional/api/users   | 99.41   | 57.89    | 100     | 100     |                                |
-| index.js                               | 99.41   | 57.89    | 100     | 100     | 2,25-32                        |
-State any other independent learning you achieved while completing this assignment.
+```
+---------------------------------------|---------|----------|---------|---------|-------------------
+File                                   | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+---------------------------------------|---------|----------|---------|---------|-------------------
+All files                              |   94.74 |    70.15 |    97.1 |   96.99 |                   
+ agile-ca2                             |     100 |      100 |     100 |     100 |                   
+  index.js                             |     100 |      100 |     100 |     100 |                   
+ agile-ca2/api                         |   87.32 |    60.46 |   87.17 |   86.76 |                   
+  tmdb-api.js                          |   87.32 |    60.46 |   87.17 |   86.76 | ...00,109,114,157 
+ agile-ca2/api/actors                  |   96.85 |    81.18 |     100 |    94.8 |                   
+  actorModel.js                        |     100 |      100 |     100 |     100 |                   
+  index.js                             |   96.66 |     80.8 |     100 |   94.36 | 54,90,110,132     
+ agile-ca2/api/movies                  |   97.76 |    84.12 |     100 |   97.14 |                   
+  index.js                             |   97.67 |    83.87 |     100 |   96.96 | 75,142,161        
+  movieModel.js                        |     100 |      100 |     100 |     100 |                   
+ agile-ca2/api/reviews                 |   95.77 |    74.54 |     100 |     100 |                   
+  index.js                             |   95.45 |    73.58 |     100 |     100 | 2,11-24,51        
+  reviewModel.js                       |     100 |      100 |     100 |     100 |                   
+ agile-ca2/api/users                   |   88.31 |    73.27 |   93.24 |    94.7 |                   
+  index.js                             |   88.14 |    77.22 |   94.82 |    95.1 | 46-54,313         
+  userModel.js                         |   89.47 |    54.05 |    87.5 |   92.59 | 17,29             
+ agile-ca2/authenticate                |   81.39 |       55 |      70 |   83.87 |                   
+  index.js                             |   81.39 |       55 |      70 |   83.87 | 16-21             
+ agile-ca2/db                          |   83.33 |      100 |      50 |   81.81 |                   
+  index.js                             |   83.33 |      100 |      50 |   81.81 | 11,14             
+ agile-ca2/errHandler                  |      80 |       50 |     100 |      80 |                   
+  index.js                             |      80 |       50 |     100 |      80 | 5                 
+ agile-ca2/seedData                    |   95.23 |    54.16 |     100 |     100 |                   
+  index.js                             |   94.54 |    52.17 |     100 |     100 | 2-50              
+  movies.js                            |     100 |      100 |     100 |     100 |                   
+  reviews.js                           |     100 |      100 |     100 |     100 |                   
+  users.js                             |     100 |      100 |     100 |     100 |                   
+ agile-ca2/tests/functional/api/actors |   98.41 |    51.51 |     100 |     100 |                   
+  index.js                             |   98.41 |    51.51 |     100 |     100 | 2,22-30           
+ agile-ca2/tests/functional/api/movies |    98.9 |    51.51 |     100 |     100 |                   
+  index.js                             |    98.9 |    51.51 |     100 |     100 | 2,22-30           
+ ...e-ca2/tests/functional/api/reviews |   97.97 |    61.36 |     100 |     100 |                   
+  index.js                             |   97.97 |    61.36 |     100 |     100 | 2,26-91           
+ agile-ca2/tests/functional/api/users  |   98.83 |    57.89 |     100 |     100 |                   
+  index.js                             |   98.83 |    57.89 |     100 |     100 | 2,25-32           
+---------------------------------------|---------|----------|---------|---------|-------------------
+```
+
+Coveralls code coverage: 
+
+**Problems**: At first I used gitlab to connect to the coveralls repository and then used gitlab ci to run it to generate code coverage. Then there was a problem where coveralls couldn't find the branch committed by gitlab, resulting in the code coverage being generated but the badge showing unknown and the branch showing the question mark. I've tried many different methods commit more than 20 times, looked through many documents and blogs and still can't solve the problem.
+
+![image-20231229144404844](./images/image-20231229144404844.png)
+
+![image-20231229144315483](./images/image-20231229144315483.png)
+
+
+
+**Travis CI**: Then I decided to use one of the most common methods on the web, which is to run coveralls statements with Travis CI to finally generate code coverage. At first, I was using GitHub for activating builds for Travis CI, but this didn't work after many tries. I ended up using a GitLab repository to interoperate with Travis CI, which worked on the first commit and was able to display code coverage and badges properly.
+
+![image-20231229144450373](./images/image-20231229144450373.png)
+
+![image-20231229144530287](./images/image-20231229144530287.png)
+
+![image-20231229145052814](./images/image-20231229145052814.png)
+
+**Netlify**: This was due to an initial Heroku account lockout, which led to issues with not being able to log in or even register as well, and then the compelling need to switch to another online deployment method. For this, I tried a number of platforms, and finally decided to use Netlify, which requires only simple configuration to complete the deployment, and can also connect directly to the GitLab repository through the CI for updates and other operations. The downside of it is that it takes money to actually deploy it, or else there's no way to access the page I deployed over the public network. The pro is that I was able to get a badge for successful deployment, so I kept it.
+
+![image-20231229150214277](./images/image-20231229150214277.png)
+
+
+
+**Heroku**: The problem is more serious here, with an inability to log in, then I wrote an email to Heroku's support and got their help, and was able to log in and access it properly after adding the double authentication.
+
+![image](./images/image.png)
+
+![image (1)](./images/image (1).png)
+
+![image (2)](./images/image (2).png)
+
+**Swagger**: 在Web应用开发的作业中已经学习到了，通过postman保存路由的方式生成json文件，再通过网上的json转yml文件功能最后通过上传这个yml文件到Swagger Hub得到最后的路由展示
+
+![image-20231222142317622](./images/image-20231222142317622.png)
