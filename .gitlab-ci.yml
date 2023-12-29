@@ -22,6 +22,8 @@ stages:
   - build
   - test
   - staging
+  - deployment
+  - delivery
 
 # Jobs:
 
