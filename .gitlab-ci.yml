@@ -43,23 +43,21 @@ test_api:
     - npm run test:coveralls
 
 deploy_staging:
-  image: edbizarro/gitlab-ci-pipeline-php:7.3-alpine
+  image: node:latest
   only:
     - develop
   stage: staging
+  services:
+    - mongo:latest
   before_script:
-    # 修复 npm 缓存权限问题
-    - sudo chown -R $(whoami) ~/.npm
-    # 安装 Node.js 和 Ruby 依赖
-    - npm install netlify-cli -g
+    - npm config set cache /tmp/npm-cache
+    - npm install -g netlify-cli
     - apt-get update -qy
-    - apt-get install -y ruby-dev
+    - apt-get install -y ruby-full
     - gem install dpl
   script:
-    # 部署到 Netlify
     - netlify deploy --site $NETLIFY_SITE_ID --auth $NETLIFY_AUTH_TOKEN --prod
     - echo "已部署到 Netlify 预发布服务器"
-    # 部署到 Heroku
     - dpl --provider=heroku --app=$HEROKU_APP_NAME_STAGING --api-key=$HEROKU_API_KEY
     - echo "已部署到 Heroku 预发布服务器"
 
